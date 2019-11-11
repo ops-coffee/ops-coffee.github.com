@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,zTree,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django+zTree构建组织架构树" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django+zTree构建组织架构树</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django+zTree构建组织架构树" />
+  <meta property="og:description" content="Django+zTree构建组织架构树" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django+zTree构建组织架构树</h1>
+      
+      
+      <blockquote>
+<p>树，因其清晰明了的展现形式而被广泛的使用</p>
+</blockquote>
+<p>日常的开发过程中我们需要经常与“树”打交道，例如公司的组织架构树、服务器的项目归属树，管理后台侧边树等等，本篇文章介绍关于树的两个内容</p>
+<ol>
+<li>多功能的前端树插件zTree</li>
+<li>Django中关于树的model设计</li>
+</ol>
+<h2 id="ztree">zTree</h2>
+<p>zTree是一个开源的依靠JQuery实现的多功能树插件，具有性能优异、配置灵活、功能强大的特点</p>
+<p>之前的<a href="https://mp.weixin.qq.com/mp/homepage?__biz=MzU5MDY1MzcyOQ==&amp;hid=12&amp;sn=07358cd1f94e69d5cbc7e236a84aa50d">系列前端插件文章</a>已经多次介绍过将前端插件引入自己项目中的方法，这里就不赘述了，如有问题也可以参考文章末尾给出的Demo代码，在引入JS/CSS之后只需要如下代码即可构建一颗树</p>
+<pre class="codehilite"><code>&lt;ul id=&quot;treeDemo&quot; class=&quot;ztree&quot;&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+    var setting = {
+      data: {
+        simpleData: {
+          enable: true
+        }
+      }
+    };
+
+    var zNodes = [
+      {id: 1, pId: 0, name: &quot;OPS-COFFEE &quot;, open: true},
+      {id: 2, pId: 1, name: &quot;运营部&quot;, open: true},
+      {id: 3, pId: 1, name: &quot;市场部&quot;, open: true},
+      {id: 4, pId: 1, name: &quot;综合部&quot;, open: true},
+      {id: 5, pId: 2, name: &quot;产品部&quot;, open: true},
+      {id: 6, pId: 2, name: &quot;技术部&quot;, open: true},
+      {id: 7, pId: 3, name: &quot;销售部&quot;, open: true},
+      {id: 8, pId: 4, name: &quot;人事部&quot;, open: true},
+      {id: 9, pId: 4, name: &quot;财务部&quot;, open: true},
+    ];
+
+    $.fn.zTree.init($(&quot;#treeDemo&quot;), setting, zNodes);
+&lt;/script&gt;</code></pre>
+
+
+<p><code>$.fn.zTree.init</code>初始化树，这里需要三个参数，第一个参数是加载树结构的Jquery对象，<code>setting</code>为ztree的各种配置参数，<code>zNodes</code>为ztree的具体数据</p>
+<p>zTree的配置采用json的格式，按照配置类型分为了界面配置<code>view</code>，数据配置<code>data</code>，编辑配置<code>edit</code>，复选框配置<code>check</code>，异步加载配置<code>async</code>以及各种回调函数配置<code>callback</code>，配置丰富且强大</p>
+<p>zTree支持两种数据模式，简单数据模式和标准数据模式，简单数据模式就像我们上边例子中这样的数据结构，而标准数据模式就需要将数据构造成复杂的JSON嵌套格式，像下边这样</p>
+<pre class="codehilite"><code>var zNodes = [{
+  &quot;name&quot;: &quot;OPS-COFFEE&quot;,
+  &quot;open&quot;: true,
+  &quot;children&quot;: [
+      {
+          &quot;name&quot;: &quot;运营部&quot;,
+          &quot;open&quot;: true,
+          &quot;children&quot;: [
+              {&quot;name&quot;: &quot;产品部&quot;,&quot;open&quot;: true},
+              {&quot;name&quot;: &quot;技术部&quot;,&quot;open&quot;: true}
+          ]
+      },
+      {
+          &quot;name&quot;: &quot;市场部&quot;,
+          &quot;open&quot;: true,
+          &quot;children&quot;: [
+              {&quot;name&quot;: &quot;销售部&quot;,&quot;open&quot;: true}
+          ]
+      },
+      {
+          &quot;name&quot;: &quot;综合部&quot;,
+          &quot;open&quot;: true,
+          &quot;children&quot;: [
+              {&quot;name&quot;: &quot;人事部&quot;,&quot;open&quot;: true},
+              {&quot;name&quot;: &quot;财务部&quot;,&quot;open&quot;: true}
+          ]
+      }
+  ]
+}];</code></pre>
+
+
+<p>标准模式数据结构复杂但父子关系清晰，简单模式数据则相反，示例中我们使用了简单数据模式，需要配置simpleData的<code>enable</code>属性为true</p>
+<p>完成以上配置后可以看到页面效果如下</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20190816.tree01.png" /></p>
+<h2 id="django">Django</h2>
+<p>既然前端页面已经能够正常展示树了，后端就只需要返回前端对应的数据格式即可，Django中最简单的方式就是使用Foreignkey的自关联，模型设计如下：</p>
+<pre class="codehilite"><code>class Department(models.Model):
+    name = models.CharField(
+        max_length=128, unique=True, verbose_name='名称')
+    parent = models.ForeignKey(
+        'self', on_delete=models.PROTECT, db_constraint=False,
+        null=True, blank=True, verbose_name='父部门')</code></pre>
+
+
+<p>ForeignKey第一个参数用<code>self</code>就表示自关联，自己关联自己，还有两个Foreignkey的重要参数解释如下：</p>
+<p><strong>on_delete：</strong> 控制当外键引用的对象被删除时指定的SQL约束行为</p>
+<ul>
+<li>CASCADE：级联删除，当你删除数据时与之关联的也会删除</li>
+<li>PROTECT：保护模式，当你删除数据时会抛出<code>ProtectedError</code>的错误</li>
+<li>SET_NULL：设置为空，当你删除数据时外键字段被设置为空，前提是有设置<code>null=True, blank=True</code></li>
+<li>SET_DEFAULT：设置默认值，当你删除数据时外键字段设置为默认值，前提是有设置<code>default</code>值</li>
+<li>DO_NOTHING：什么也不做，但这可能会导致你在调用数据时报错</li>
+<li>SET：设置一个指定的自定义实例，官方案例如下</li>
+</ul>
+<pre class="codehilite"><code>from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import models
+
+def get_sentinel_user():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
+
+class MyModel(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET(get_sentinel_user),
+    )</code></pre>
+
+
+<p>这个案例的意思是当删除外键字段user有关联时调用<code>get_sentinel_user</code>方法，这个方法会返回一个username为deleted的实例</p>
+<p><strong>db_constraint：</strong> 控制是否在数据库中为此外键创建约束，默认为True。在数据库中创建外键约束是<strong>数据库规范中明令禁止</strong>的行为，那么我们可以设置<code>db_constraint</code>为<code>False</code>从而不在数据库层面创建约束，但同样可以使用Django为Foreignkey提供的各种关联查询</p>
+<p>接下来可以通过如下代码将数据库中的数据转成ztree所能使用的简单模式数据并返回</p>
+<pre class="codehilite"><code>def tree(request):
+    mList = Department.objects.all()
+
+    _data = [
+        {
+            'id': x.id,
+            'name': x.name,
+            'pId': x.parent.id if x.parent else 0, 'open': 1
+        } for x in mList
+    ]
+
+    return render(request, 'tree.html', {'data': _data})</code></pre>
+
+
+<p>注意在前端使用时需要用<code>{{data|safe}}</code>的方式，添加<code>|safe</code>主要是因为Django为了安全默认会对HTML、JS等语法标签进行转义，但我们所传给前端的数据不希望转义可以通过添加<code>|safe</code>来实现</p>
+<h2 id="demo">完整Demo</h2>
+<p>文章源码已上传至Github，除了以上基础代码外还包含下拉框加载树等功能，公众号后台回复<strong>06</strong>获取源码地址吧</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20190816.tree02.gif" /></p>
+<hr />
+<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
+<p>相关文章推荐阅读：</p>
+<ul>
+<li>
+<p><a href="https://ops-coffee.cn/s/5dZx6HrPE1Y4rdxqHTYN-g">前端插件之Datatables使用--下篇</a></p>
+</li>
+<li>
+<p><a href="https://ops-coffee.cn/s/r5SpyTjRl0jJeAuYE4Q_-Q">Django使用Channels实现WebSocket--下篇</a></p>
+</li>
+</ul>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

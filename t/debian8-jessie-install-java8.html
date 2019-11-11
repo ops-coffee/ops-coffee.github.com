@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Debian,8,Jessie,Java8,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Debian 8 Jessie安装Java8" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Debian 8 Jessie安装Java8</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Debian 8 Jessie安装Java8" />
+  <meta property="og:description" content="Debian 8 Jessie安装Java8" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Debian 8 Jessie安装Java8</h1>
+      
+      
+      <p>1.下载java8</p>
+<p>可以在如下页面找到对应的软件包<a href="https://docs.aws.amazon.com/zh_cn/corretto/latest/corretto-8-ug/downloads-list.html">https://docs.aws.amazon.com/zh_cn/corretto/latest/corretto-8-ug/downloads-list.html</a></p>
+<pre class="codehilite"><code>wget https://d3pxv6yz143wms.cloudfront.net/8.222.10.1/java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb</code></pre>
+
+
+<p>2.安装java-common软件包</p>
+<pre class="codehilite"><code>apt-get update &amp;&amp; apt-get install java-common</code></pre>
+
+
+<p>3.使用dpkg命令直接安装.deb文件</p>
+<pre class="codehilite"><code>dpkg --install java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb </code></pre>
+
+
+<p>4.查看版本</p>
+<pre class="codehilite"><code># java -version
+openjdk version &quot;1.8.0_222&quot;
+OpenJDK Runtime Environment Corretto-8.222.10.1 (build 1.8.0_222-b10)
+OpenJDK 64-Bit Server VM Corretto-8.222.10.1 (build 25.222-b10, mixed mode)</code></pre>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

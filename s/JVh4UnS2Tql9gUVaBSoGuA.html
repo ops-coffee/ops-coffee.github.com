@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,model,select,Django,QuerySet,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django model select的各种用法详解" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django model select的各种用法详解</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django model select的各种用法详解" />
+  <meta property="og:description" content="Django model select的各种用法详解" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django model select的各种用法详解</h1>
+      
+      
+      <blockquote>
+<p><a href="https://ops-coffee.cn/s/B_aNB8Y8snbSVLURONZ4Qg">《Django model update的各种用法介绍》</a>文章介绍了Django model的各种update操作，这篇文章就是她的姊妹篇，详细介绍Django model select的用法，配以对应MySQL的查询语句，理解起来更轻松。</p>
+</blockquote>
+<h1 id="_1">基本操作</h1>
+<pre class="codehilite"><code># 获取所有数据，对应SQL：select * from User
+User.objects.all()
+
+# 匹配，对应SQL：select * from User where name = '运维咖啡吧'
+User.objects.filter(name='运维咖啡吧')
+
+# 不匹配，对应SQL：select * from User where name != '运维咖啡吧'
+User.objects.exclude(name='运维咖啡吧')
+
+# 获取单条数据（有且仅有一条，id唯一），对应SQL：select * from User where id = 724
+User.objects.get(id=123)</code></pre>
+
+
+<h1 id="_2">常用操作</h1>
+<pre class="codehilite"><code># 获取总数，对应SQL：select count(1) from User
+User.objects.count()
+User.objects.filter(name='运维咖啡吧').count()
+
+# 比较，gt:&gt;，gte:&gt;=，lt:&lt;，lte:&lt;=,对应SQL：select * from User where id &gt; 724
+User.objects.filter(id__gt=724)
+User.objects.filter(id__gt=1, id__lt=10)
+
+# 包含，in，对应SQL：select * from User where id in (11,22,33)
+User.objects.filter(id__in=[11, 22, 33])
+User.objects.exclude(id__in=[11, 22, 33])
+
+# isnull：isnull=True为空，isnull=False不为空，对应SQL：select * from User where pub_date is null
+User.objects.filter(pub_date__isnull=True)
+
+# like，contains大小写敏感，icontains大小写不敏感，相同用法的还有startswith、endswith
+User.objects.filter(name__contains=&quot;sre&quot;)
+User.objects.exclude(name__contains=&quot;sre&quot;)
+
+# 范围，between and，对应SQL：select * from User where id between 3 and 8
+User.objects.filter(id__range=[3, 8])
+
+# 排序，order by，'id'按id正序，'-id'按id倒叙
+User.objects.filter(name='运维咖啡吧').order_by('id')
+User.objects.filter(name='运维咖啡吧').order_by('-id')
+
+# 多级排序，order by，先按name进行正序排列，如果name一致则再按照id倒叙排列
+User.objects.filter(name='运维咖啡吧').order_by('name','-id')</code></pre>
+
+
+<h1 id="_3">进阶操作</h1>
+<pre class="codehilite"><code># limit，对应SQL：select * from User limit 3;
+User.objects.all()[:3]
+
+# limit，取第三条以后的数据，没有对应的SQL，类似的如：select * from User limit 3,10000000，从第3条开始取数据，取10000000条（10000000大于表中数据条数）
+User.objects.all()[3:]
+
+# offset，取出结果的第10-20条数据（不包含10，包含20）,也没有对应SQL，参考上边的SQL写法
+User.objects.all()[10:20]
+
+# 分组，group by，对应SQL：select username,count(1) from User group by username;
+from django.db.models import Count
+User.objects.values_list('username').annotate(Count('id'))
+
+# 去重distinct，对应SQL：select distinct(username) from User
+User.objects.values('username').distinct().count()
+
+# filter多列、查询多列，对应SQL：select username,fullname from accounts_user
+User.objects.values_list('username', 'fullname')
+
+# filter单列、查询单列，正常values_list给出的结果是个列表，里边里边的每条数据对应一个元组，当只查询一列时，可以使用flat标签去掉元组，将每条数据的结果以字符串的形式存储在列表中，从而避免解析元组的麻烦
+User.objects.values_list('username', flat=True)
+
+# int字段取最大值、最小值、综合、平均数
+from django.db.models import Sum,Count,Max,Min,Avg
+
+User.objects.aggregate(Count(‘id’))
+User.objects.aggregate(Sum(‘age’))</code></pre>
+
+
+<h1 id="_4">时间字段</h1>
+<pre class="codehilite"><code># 匹配日期，date
+User.objects.filter(create_time__date=datetime.date(2018, 8, 1))
+User.objects.filter(create_time__date__gt=datetime.date(2018, 8, 2))
+
+# 匹配年，year，相同用法的还有匹配月month，匹配日day，匹配周week_day，匹配时hour，匹配分minute，匹配秒second
+User.objects.filter(create_time__year=2018)
+User.objects.filter(create_time__year__gte=2018)
+
+# 按天统计归档
+today = datetime.date.today()
+select = {'day': connection.ops.date_trunc_sql('day', 'create_time')}
+deploy_date_count = Task.objects.filter(
+    create_time__range=(today - datetime.timedelta(days=7), today)
+).extra(select=select).values('day').annotate(number=Count('id'))</code></pre>
+
+
+<h1 id="q">Q 的使用</h1>
+<p>Q对象可以对关键字参数进行封装，从而更好的应用多个查询，可以组合&amp;(and)、|(or)、~(not)操作符。</p>
+<p>例如下边的语句</p>
+<pre class="codehilite"><code>from django.db.models import Q
+
+User.objects.filter(
+    Q(role__startswith='sre_'),
+    Q(name='公众号') | Q(name='运维咖啡吧')
+)</code></pre>
+
+
+<p>转换成SQL语句如下：</p>
+<pre class="codehilite"><code>select * from User where role like 'sre_%' and (name='公众号' or name='运维咖啡吧')</code></pre>
+
+
+<p>通常更多的时候我们用Q来做搜索逻辑，比如前台搜索框输入一个字符，后台去数据库中检索标题或内容中是否包含</p>
+<pre class="codehilite"><code>_s = request.GET.get('search')
+
+_t = Blog.objects.all()
+if _s:
+    _t = _t.filter(
+        Q(title__icontains=_s) |
+        Q(content__icontains=_s)
+    )
+
+return _t</code></pre>
+
+
+<h1 id="foreignkey">外键：ForeignKey</h1>
+<ul>
+<li>表结构：</li>
+</ul>
+<pre class="codehilite"><code>class Role(models.Model):
+    name = models.CharField(max_length=16, unique=True)
+
+
+class User(models.Model):
+    username = models.EmailField(max_length=255, unique=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)</code></pre>
+
+
+<ul>
+<li>正向查询:</li>
+</ul>
+<pre class="codehilite"><code># 查询用户的角色名
+_t = User.objects.get(username='运维咖啡吧')
+_t.role.name</code></pre>
+
+
+<ul>
+<li>反向查询：</li>
+</ul>
+<pre class="codehilite"><code># 查询角色下包含的所有用户
+_t = Role.objects.get(name='Role03')
+_t.user_set.all()</code></pre>
+
+
+<ul>
+<li>另一种反向查询的方法：</li>
+</ul>
+<pre class="codehilite"><code>_t = Role.objects.get(name='Role03')
+
+# 这种方法比上一种_set的方法查询速度要快
+User.objects.filter(role=_t)</code></pre>
+
+
+<ul>
+<li>第三种反向查询的方法：</li>
+</ul>
+<p>如果外键字段有<code>related_name</code>属性，例如models如下：</p>
+<pre class="codehilite"><code>class User(models.Model):
+    username = models.EmailField(max_length=255, unique=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE,related_name='roleUsers')</code></pre>
+
+
+<p>那么可以直接用<code>related_name</code>属性取到某角色的所有用户</p>
+<pre class="codehilite"><code>_t = Role.objects.get(name = 'Role03')
+_t.roleUsers.all()</code></pre>
+
+
+<h1 id="m2mmanytomanyfield">M2M：ManyToManyField</h1>
+<ul>
+<li>表结构：</li>
+</ul>
+<pre class="codehilite"><code>class Group(models.Model):
+    name = models.CharField(max_length=16, unique=True)
+
+class User(models.Model):
+    username = models.CharField(max_length=255, unique=True)
+    groups = models.ManyToManyField(Group, related_name='groupUsers')</code></pre>
+
+
+<ul>
+<li>正向查询:</li>
+</ul>
+<pre class="codehilite"><code># 查询用户隶属组
+_t = User.objects.get(username = '运维咖啡吧')
+_t.groups.all()</code></pre>
+
+
+<ul>
+<li>反向查询：</li>
+</ul>
+<pre class="codehilite"><code># 查询组包含用户
+_t = Group.objects.get(name = 'groupC')
+_t.user_set.all()</code></pre>
+
+
+<p>同样M2M字段如果有<code>related_name</code>属性，那么可以直接用下边的方式反查</p>
+<pre class="codehilite"><code>_t = Group.objects.get(name = 'groupC')
+_t.groupUsers.all()</code></pre>
+
+
+<h1 id="get_object_or_404">get_object_or_404</h1>
+<p>正常如果我们要去数据库里搜索某一条数据时，通常使用下边的方法：</p>
+<pre class="codehilite"><code>_t = User.objects.get(id=734)</code></pre>
+
+
+<p>但当<code>id=724</code>的数据不存在时，程序将会抛出一个错误</p>
+<pre class="codehilite"><code>abcer.models.DoesNotExist: User matching query does not exist.</code></pre>
+
+
+<p>为了程序兼容和异常判断，我们可以使用下边两种方式:
+- 方式一：<code>get</code>改为<code>filter</code></p>
+<pre class="codehilite"><code>_t = User.objects.filter(id=724)
+# 取出_t之后再去判断_t是否存在</code></pre>
+
+
+<ul>
+<li>方式二：使用<code>get_object_or_404</code></li>
+</ul>
+<pre class="codehilite"><code>from django.shortcuts import get_object_or_404
+
+_t = get_object_or_404(User, id=724)
+# get_object_or_404方法，它会先调用django的get方法，如果查询的对象不存在的话，则抛出一个Http404的异常</code></pre>
+
+
+<p>实现方法类似于下边这样：</p>
+<pre class="codehilite"><code>from django.http import Http404
+
+try:
+    _t = User.objects.get(id=724)
+except User.DoesNotExist:
+    raise Http404</code></pre>
+
+
+<h1 id="get_or_create">get_or_create</h1>
+<p>顾名思义，查找一个对象如果不存在则创建，如下：</p>
+<pre class="codehilite"><code>object, created = User.objects.get_or_create(username='运维咖啡吧')</code></pre>
+
+
+<p>返回一个由object和created组成的元组，其中object就是一个查询到的或者是被创建的对象，created是一个表示是否创建了新对象的布尔值</p>
+<p>实现方式类似于下边这样：</p>
+<pre class="codehilite"><code>try:
+    object = User.objects.get(username='运维咖啡吧')
+
+    created = False
+exception User.DoesNoExist:
+    object = User(username='运维咖啡吧')
+    object.save()
+
+    created = True
+
+returen object, created</code></pre>
+
+
+<h1 id="sql">执行原生SQL</h1>
+<p>Django中能用ORM的就用它ORM吧，不建议执行原生SQL，可能会有一些安全问题，如果实在是SQL太复杂ORM实现不了，那就看看下边执行原生SQL的方法，跟直接使用pymysql基本一致了</p>
+<pre class="codehilite"><code>from django.db import connection
+
+with connection.cursor() as cursor:
+    cursor.execute('select * from accounts_User')
+    row = cursor.fetchall()
+
+return row</code></pre>
+
+
+<p>注意这里表名字要用<strong>app名+下划线+model名</strong>的方式</p>
+<hr />
+<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

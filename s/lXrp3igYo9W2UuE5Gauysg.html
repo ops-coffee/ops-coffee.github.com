@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,Celery,Django,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django配置Celery执行异步任务和定时任务" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django配置Celery执行异步任务和定时任务</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django配置Celery执行异步任务和定时任务" />
+  <meta property="og:description" content="Django配置Celery执行异步任务和定时任务" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django配置Celery执行异步任务和定时任务</h1>
+      
+      
+      <blockquote>
+<p>原生Celery，非djcelery模块，所有演示均基于Django2.0</p>
+</blockquote>
+<p>celery是一个基于python开发的简单、灵活且可靠的分布式任务队列框架，支持使用任务队列的方式在分布式的机器/进程/线程上执行任务调度。采用典型的生产者-消费者模型，主要由三部分组成：
+1. 消息队列broker：broker实际上就是一个MQ队列服务，可以使用Redis、RabbitMQ等作为broker
+2. 处理任务的消费者workers：broker通知worker队列中有任务，worker去队列中取出任务执行，每一个worker就是一个进程
+3. 存储结果的backend：执行结果存储在backend，默认也会存储在broker使用的MQ队列服务中，也可以单独配置用何种服务做backend</p>
+<p><img alt="图片来自互联网" src="http://blz.nos-hz.163yun.com/sre/images/20180714.celery.png" /></p>
+<h1 id="_1">异步任务</h1>
+<p>我的异步使用场景为项目上线：前端web上有个上线按钮，点击按钮后发请求给后端，后端执行上线过程要5分钟，后端在接收到请求后把任务放入队列异步执行，同时马上返回给前端一个任务执行中的结果。若果没有异步执行会怎么样呢？同步的情况就是执行过程中前端一直在等后端返回结果，页面转呀转的就转超时了。</p>
+<h2 id="_2">异步任务配置</h2>
+<ol>
+<li>安装RabbitMQ，这里我们使用RabbitMQ作为broker，安装完成后默认启动了，也不需要其他任何配置</li>
+</ol>
+<pre class="codehilite"><code># apt-get install rabbitmq-server</code></pre>
+
+
+<ol>
+<li>安装celery</li>
+</ol>
+<pre class="codehilite"><code># pip3 install celery</code></pre>
+
+
+<ol>
+<li>celery用在django项目中，django项目目录结构(简化)如下</li>
+</ol>
+<pre class="codehilite"><code>website/
+|-- deploy
+|   |-- admin.py
+|   |-- apps.py
+|   |-- __init__.py
+|   |-- models.py
+|   |-- tasks.py
+|   |-- tests.py
+|   |-- urls.py
+|   `-- views.py
+|-- manage.py
+|-- README
+`-- website
+    |-- celery.py
+    |-- __init__.py
+    |-- settings.py
+    |-- urls.py
+    `-- wsgi.py</code></pre>
+
+
+<ol>
+<li>创建<code>website/celery.py</code>主文件</li>
+</ol>
+<pre class="codehilite"><code>from __future__ import absolute_import, unicode_literals
+import os
+from celery import Celery, platforms
+
+# set the default Django settings module for the 'celery' program.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'website.settings')
+
+app = Celery('website')
+
+# Using a string here means the worker don't have to serialize
+# the configuration object to child processes.
+# - namespace='CELERY' means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+# 允许root 用户运行celery
+platforms.C_FORCE_ROOT = True
+
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))</code></pre>
+
+
+<ol>
+<li>在<code>website/__init__.py</code>文件中增加如下内容，确保django启动的时候这个app能够被加载到</li>
+</ol>
+<pre class="codehilite"><code>from __future__ import absolute_import
+
+# This will make sure the app is always imported when
+# Django starts so that shared_task will use this app.
+from .celery import app as celery_app
+
+__all__ = ['celery_app']</code></pre>
+
+
+<ol>
+<li>各应用创建tasks.py文件，这里为<code>deploy/tasks.py</code></li>
+</ol>
+<pre class="codehilite"><code>from __future__ import absolute_import
+from celery import shared_task
+
+@shared_task
+def add(x, y):
+    return x + y</code></pre>
+
+
+<ul>
+<li>
+<p><strong>注意tasks.py必须建在各app的根目录下，且只能叫tasks.py，不能随意命名</strong></p>
+</li>
+<li>
+<p>views.py中引用使用这个tasks异步处理</p>
+</li>
+</ul>
+<pre class="codehilite"><code>from deploy.tasks import add
+
+def post(request):
+    result = add.delay(2, 3)</code></pre>
+
+
+<ul>
+<li>使用函数名.delay()即可使函数异步执行</li>
+<li>可以通过<code>result.ready()</code>来判断任务是否完成处理</li>
+<li>如果任务抛出一个异常，使用<code>result.get(timeout=1)</code>可以重新抛出异常</li>
+<li>
+<p>如果任务抛出一个异常，使用<code>result.traceback</code>可以获取原始的回溯信息</p>
+</li>
+<li>
+<p>启动celery</p>
+</li>
+</ul>
+<pre class="codehilite"><code># celery -A website worker -l info</code></pre>
+
+
+<ol>
+<li>这样在调用post这个方法时，里边的add就可以异步处理了</li>
+</ol>
+<h1 id="_3">定时任务</h1>
+<p>定时任务的使用场景就很普遍了，比如我需要定时发送报告给老板~</p>
+<h2 id="_4">定时任务配置</h2>
+<ol>
+<li><code>website/celery.py</code>文件添加如下配置以支持定时任务crontab</li>
+</ol>
+<pre class="codehilite"><code>from celery.schedules import crontab
+
+app.conf.update(
+    CELERYBEAT_SCHEDULE = {
+        'sum-task': {
+            'task': 'deploy.tasks.add',
+            'schedule':  timedelta(seconds=20),
+            'args': (5, 6)
+        }
+        'send-report': {
+            'task': 'deploy.tasks.report',
+            'schedule': crontab(hour=4, minute=30, day_of_week=1),
+        }
+    }
+)</code></pre>
+
+
+<ul>
+<li>
+<p>定义了两个task：</p>
+<ul>
+<li>名字为'sum-task'的task，每20秒执行一次add函数，并传了两个参数5和6</li>
+<li>名字为'send-report'的task，每周一早上4：30执行report函数</li>
+</ul>
+</li>
+<li>
+<p>timedelta是datetime中的一个对象，需要<code>from datetime import timedelta</code>引入，有如下几个参数</p>
+<ul>
+<li><code>days</code>：天</li>
+<li><code>seconds</code>：秒</li>
+<li><code>microseconds</code>：微妙</li>
+<li><code>milliseconds</code>：毫秒</li>
+<li><code>minutes</code>：分</li>
+<li><code>hours</code>：小时</li>
+</ul>
+</li>
+<li>
+<p>crontab的参数有：</p>
+<ul>
+<li><code>month_of_year</code>：月份</li>
+<li><code>day_of_month</code>：日期</li>
+<li><code>day_of_week</code>：周</li>
+<li><code>hour</code>：小时</li>
+<li><code>minute</code>：分钟</li>
+</ul>
+</li>
+<li>
+<p><code>deploy/tasks.py</code>文件添加report方法：</p>
+</li>
+</ul>
+<pre class="codehilite"><code>@shared_task
+def report():
+    return 5</code></pre>
+
+
+<ol>
+<li>启动celery beat，celery启动了一个beat进程一直在不断的判断是否有任务需要执行</li>
+</ol>
+<pre class="codehilite"><code># celery -A website beat -l info</code></pre>
+
+
+<h1 id="tips">Tips</h1>
+<ol>
+<li>如果你同时使用了异步任务和计划任务，有一种更简单的启动方式<code>celery -A website worker -b -l info</code>，可同时启动worker和beat</li>
+<li>如果使用的不是rabbitmq做队列那么需要在主配置文件中<code>website/celery.py</code>配置broker和backend，如下：</li>
+</ol>
+<pre class="codehilite"><code># redis做MQ配置
+app = Celery('website', backend='redis', broker='redis://localhost')
+# rabbitmq做MQ配置
+app = Celery('website', backend='amqp', broker='amqp://admin:admin@localhost')</code></pre>
+
+
+<ol>
+<li>celery不能用root用户启动的话需要在主配置文件中添加<code>platforms.C_FORCE_ROOT = True</code></li>
+<li>celery在长时间运行后可能出现内存泄漏，需要添加配置<code>CELERYD_MAX_TASKS_PER_CHILD = 10</code>，表示每个worker执行了多少个任务就死掉</li>
+</ol>
+<h1 id="_5">参考文章：</h1>
+<ul>
+<li><a href="http://docs.celeryproject.org/en/latest/">http://docs.celeryproject.org/en/latest/</a></li>
+<li><a href="https://github.com/pylixm/celery-examples">https://github.com/pylixm/celery-examples</a></li>
+<li><a href="https://pylixm.cc/posts/2015-12-03-Django-celery.html">https://pylixm.cc/posts/2015-12-03-Django-celery.html</a></li>
+</ul>
+<hr />
+<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

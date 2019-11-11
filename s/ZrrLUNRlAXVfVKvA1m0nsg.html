@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="SQL,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="中小团队快速构建SQL自动审核系统" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>中小团队快速构建SQL自动审核系统</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="中小团队快速构建SQL自动审核系统" />
+  <meta property="og:description" content="中小团队快速构建SQL自动审核系统" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">中小团队快速构建SQL自动审核系统</h1>
+      
+      
+      <blockquote>
+<p>SQL审核与执行，作为DBA日常工作中相当重要的一环，一直以来我们都是通过人工的方式来处理，效率低且质量没办法保证。为了规范操作，提高效率，我们决定引入目前市面上非常流行的SQL自动审核工具Inception。</p>
+<p>花了一周看了inception官方文档并搭建了测试环境简单测试，又花了3天写了webui（内部起名叫overmind，以下也简称overmind），目前正在进行各种测试以及手册的编写，还未正式跟我们的流程结合起来投入使用，后续正式使用后再更新使用经验。</p>
+</blockquote>
+<h1 id="inception">Inception</h1>
+<ul>
+<li>github：<a href="https://github.com/mysql-inception/inception">https://github.com/mysql-inception/inception</a></li>
+<li>官方文档：<a href="http://mysql-inception.github.io/inception-document/">http://mysql-inception.github.io/inception-document</a></li>
+</ul>
+<p>Inception是一个开源的Mysql自动化工具，具有SQL审核、执行、回滚等实用的功能，由国内大神基于mysql源码开发，可以很明确的，详细的，准确的审核Mysql的SQL语句，工作模式与Mysql完全相同，可以直接使用mysql客户端来连接。但遗憾的是2年前已停止更新，不过兼容大部分的mysql版本，仍然是开源SQL审核工具的翘楚。</p>
+<h2 id="inception_1">Inception的架构如下：</h2>
+<p><img alt="inception架构图" src="http://blz.nos-hz.163yun.com/sre/20180719/inception.png" /></p>
+<h1 id="overmind">Overmind</h1>
+<h2 id="_1">审核流程</h2>
+<p>我们的审核流程现在主要分两部分：</p>
+<p>1.Dev和Qa等线下测试环境：为了简化流程，开发测试环境，可以由开发直接通过overmind系统进行审核或执行</p>
+<p>2.Prod生产环境：生产环境以安全为主，在Dev和Qa环境<strong>执行成功</strong>后详情页面会有个“申请上线”按钮，点击申请上线自动发送邮件给DBA，待DBA审核通过后方可上线</p>
+<h2 id="_2">系统介绍</h2>
+<ul>
+<li>
+<p>基本配置页面：可以直接在页面上配置inception的信息，方便迁移
+<img alt="基本配置页" src="http://blz.nos-hz.163yun.com/sre/20180719/config.png" /></p>
+</li>
+<li>
+<p>数据库信息录入：相当于一个简单数据库的cmdb系统，可以管理数据库信息
+<img alt="数据库信息录入" src="http://blz.nos-hz.163yun.com/sre/20180719/mysql_create.png" /></p>
+</li>
+<li>
+<p>审核任务提交：支持审核和执行两种模式，审核模式只给审核结果，执行模式在执行之前会先审核
+<img alt="审核任务提交" src="http://blz.nos-hz.163yun.com/sre/20180719/task_create.png" /></p>
+</li>
+<li>
+<p>审核结果展示：详细展示SQL审核的所有信息，包括提交用户、执行操作、审核结果等等
+<img alt="审核结果展示" src="http://blz.nos-hz.163yun.com/sre/20180719/task_detail.png" /></p>
+</li>
+<li>
+<p>任务列表页面：可以很方便只查看自己提交的任务，或者查看固定项目的，固定环境的任务
+<img alt="任务列表页" src="http://blz.nos-hz.163yun.com/sre/20180719/task_list.png" /></p>
+</li>
+</ul>
+<h2 id="_3">关于开源</h2>
+<p>开源在我看来是一件很隆重的事情，之前刚学python的时候开源了自己写的一个简单后台sadmin（github或gitee可以搜索到），因为一些原因停止更新了。目前没有时间和精力来做长久的支持和维护，所以暂时不打算把源代码放到github上。另外同类型的已经有一个非常棒的开源产品Yearning了，可以github搜索安装学习。</p>
+<h1 id="_4">写在最后</h1>
+<ol>
+<li>先说感谢！感谢大神开发的Inception，绝对是DBA界的福音</li>
+<li>之所以能就花了3天时间写了overmind，主要还是借助了之前已写好的其他项目框架，在此基础上做修改，还是很快的</li>
+<li>工具部署与页面编写都是比较简单的，团队内部都可以搞定，要把工具推出去，融入到现在的流程中是一件比较困难的事情，给团队内定的规则就是a.完善的文档，用户在审核前就知晓哪些sql通不过，在审核失败时知晓如何修改能成功，b.对用户的感知应降到最低，不要因为用了overmind而造成额外的麻烦，要让用户用的爽</li>
+<li>希望作者或其他大神能持续更新Inception，继续造福广大DBA</li>
+</ol>
+<p><img alt="扫码关注公众号查看更多实用文章" src="http://blz.nos-hz.163yun.com/sre/wx.qrcode.jpg" /></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

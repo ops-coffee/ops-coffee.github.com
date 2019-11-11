@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="python,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="python中的引用传递" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>python中的引用传递</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="python中的引用传递" />
+  <meta property="og:description" content="python中的引用传递" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">python中的引用传递</h1>
+      
+      
+      <p>以下内容来源于QQ群，出于隐私考虑，提问者昵称用“网友9527”代替</p>
+<hr />
+<p><span style="color:green">网友9527 17:32:34</span></p>
+<pre class="codehilite"><code>&gt;&gt;&gt; a = [1, 2]
+&gt;&gt;&gt;
+&gt;&gt;&gt; a[1] = a
+&gt;&gt;&gt;
+&gt;&gt;&gt; print(a[1])
+[1, [...]]  </code></pre>
+
+
+<p>有没有大佬释义下这个结果为啥是[1, [...]]   </p>
+<p><span style="color:blue">ops-coffee.cn 17:59:05</span></p>
+<p>@网友9527  这个问题有意思，我怕给你解释不清楚，你自己查一下python的引导传递吧</p>
+<p><span style="color:green">网友9527 17:59:20</span></p>
+<p>多谢</p>
+<p><span style="color:blue">ops-coffee.cn 18:02:25</span></p>
+<p>简单来说这里实际上传递的不是值，而是内存地址，这样就导致了最终结果里边是一个无限循环</p>
+<p><span style="color:blue">ops-coffee.cn 18:09:54</span></p>
+<pre class="codehilite"><code>&gt;&gt;&gt; a = [1, 2]
+&gt;&gt;&gt;
+&gt;&gt;&gt; id(a)
+1332642909640
+&gt;&gt;&gt;
+&gt;&gt;&gt; id(a[1])
+1578131712
+&gt;&gt;&gt;
+&gt;&gt;&gt;a[1] = a
+&gt;&gt;&gt;id(a[1])
+1332642909640</code></pre>
+
+
+<p><span style="color:blue">ops-coffee.cn 18:10:04</span></p>
+<p>这个应该看得更清晰一点</p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

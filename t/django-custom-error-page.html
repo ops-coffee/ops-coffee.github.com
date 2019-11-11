@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django自定义错误页面配置" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django自定义错误页面配置</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django自定义错误页面配置" />
+  <meta property="og:description" content="Django自定义错误页面配置" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django自定义错误页面配置</h1>
+      
+      
+      <blockquote>
+<p>基于Django 2.2版本实现</p>
+</blockquote>
+<p>Django下的错误类型主要有四种：
+- 400：客户端错误
+- 403：没有权限
+- 404：页面未找到
+- 500：服务器错误</p>
+<ol>
+<li>修改settings.py文件关闭DEBUG模式</li>
+</ol>
+<pre class="codehilite"><code>DEBUG = False</code></pre>
+
+
+<p>自定义错误页面在<code>Debug = True</code>时不生效</p>
+<ol>
+<li>创建错误页面，例如errors/403.html</li>
+</ol>
+<pre class="codehilite"><code>You Don't have permission !
+Please contact ops-coffee.cn</code></pre>
+
+
+<ol>
+<li>view.py视图中创建自定义错误处理方法</li>
+</ol>
+<pre class="codehilite"><code>from django.shortcuts import render
+
+def bad_request_view(request, exception, template_name='errors/400.html'):
+    return render(request, template_name)
+
+def permission_denied_view(request, exception, template_name='errors/403.html'):
+    return render(request, template_name)
+
+def page_not_found_view(request, exception, template_name='errors/404.html'):
+    return render(request, template_name)
+
+def error_view(request, exception, template_name='errors/500.html'):
+    return render(request, template_name)</code></pre>
+
+
+<ol>
+<li>urls.py中添加错误行为由自定义程序处理</li>
+</ol>
+<pre class="codehilite"><code>handler400 = 'webapp.views.bad_request_view'
+handler403 = 'webapp.views.permission_denied_view'
+handler404 = 'webapp.views.page_not_found_view'
+handler500 = 'webapp.views.error_view'</code></pre>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,model,Json,model,dict,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django model转字典的几种方法" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django model转字典的几种方法</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django model转字典的几种方法" />
+  <meta property="og:description" content="Django model转字典的几种方法" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django model转字典的几种方法</h1>
+      
+      
+      <blockquote>
+<p>平常的开发过程中不免遇到需要把model转成字典的需求，尤其是现在流行前后端分离架构，Json格式几乎成了前后端之间数据交换的标准，这种model转dict的需求就更多了，本文介绍几种日常使用的方法以供参考，所有例子均基于Django 2.0环境演示</p>
+</blockquote>
+<h1 id="_1">背景介绍</h1>
+<p>model内容如下：</p>
+<pre class="codehilite"><code>class Group(models.Model):
+    name = models.CharField(max_length=255, unique=True, verbose_name='组名称')
+
+    def __str__(self):
+        return self.name
+
+class User(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    username = models.EmailField(max_length=255, unique=True, verbose_name='用户名')
+    fullname = models.CharField(max_length=64, null=True, verbose_name='中文名')
+    is_active = models.BooleanField(default=True, verbose_name='激活状态')
+    leader = models.ForeignKey('self', null=True, on_delete=models.CASCADE, verbose_name='上级')
+    group = models.ManyToManyField(Group, null=True, verbose_name='所属组')
+
+    def __str__(self):
+        return self.username</code></pre>
+
+
+<p>需求很简单就是分别把Group和User表中的数据转换成字典格式返回</p>
+<h1 id="_2">方法一：直接构建字典</h1>
+<p>示例代码：</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; _t = Group.objects.get(id=1)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; dict = {
+...   'id': _t.id,
+...   'name': _t.name
+... }
+&gt;&gt;&gt; 
+&gt;&gt;&gt; print(dict)
+{'name': 'GroupA', 'id': 1}</code></pre>
+
+
+<p>这种方法的好处是方便控制最终返回字典value的格式，例如对于User表，我想返回最终的数据是id、创建时间、中文名、上级中文名、所属组名列表的话可以用下边的代码实现</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; _t = User.objects.get(id=2)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; dict = {
+...   'id': _t.id,
+...   'create_time': _t.create_time.strftime('%Y-%m-%d %H:%M:%S'),
+...   'fullname': _t.fullname if _t.fullname else None,
+...   'leader': _t.leader.fullname if _t.leader else None,
+...   'group': [ i.name for i in _t.group.all() ],
+... }
+&gt;&gt;&gt; 
+&gt;&gt;&gt; print(dict)
+{'fullname': '运维咖啡吧', 'group': ['GroupA', 'GroupC', 'GroupE'], 'create_time': '2018-10-12 21:20:19', 'id': 2, 'leader': '公众号'}
+&gt;&gt;&gt; </code></pre>
+
+
+<p>缺点也很明显，就是如果一个model字段很多且不需要转换value格式的时候需要写大量冗余的代码，这种问题怎么解决呢？且看下边的方法介绍</p>
+<h1 id="dict">方法二：<strong>dict</strong></h1>
+<p>示例代码：</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; Group.objects.get(id=1).__dict__
+{'id': 1, 'name': 'GroupA', '_state': &lt;django.db.models.base.ModelState object at 0x7f68612daef0&gt;}
+&gt;&gt;&gt; 
+&gt;&gt;&gt; User.objects.get(id=1).__dict__
+{'is_active': True, '_state': &lt;django.db.models.base.ModelState object at 0x7f68612fa0b8&gt;, 'id': 1, 'username': 'ops@163.com', 'leader_id': None, 'fullname': '公众号', 'update_time': datetime.datetime(2018, 10, 12, 17, 49, 35, 504141), 'create_time': datetime.datetime(2018, 10, 12, 16, 9, 7, 813660)}</code></pre>
+
+
+<p>这种方法优点就是写法简单，容易理解，代码量还少</p>
+<p>但会发现多了个没用的<code>_state</code>字段，同时Foreignkey字段名多了<code>_id</code>，也没有ManyToManyField字段的数据，且不能按需显示输出，当我只需要其中几个字段时会有大量冗余数据</p>
+<h1 id="model_to_dict">方法三：model_to_dict</h1>
+<p>示例代码：</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; model_to_dict(Group.objects.get(id=1))
+{'name': 'GroupA', 'id': 1}
+&gt;&gt;&gt; 
+&gt;&gt;&gt; model_to_dict(User.objects.get(id=2))
+{'leader': 1, 'is_active': True, 'username': 'ops-coffee@163.com', 'fullname': '运维咖啡吧', 'group': [&lt;Group: GroupA&gt;, &lt;Group: GroupC&gt;, &lt;Group: GroupE&gt;], 'id': 2}</code></pre>
+
+
+<p>这种方法能满足大部分的需求，且输出也较为合理，同时还有两个参数<code>fields</code>和<code>exclude</code>来配置输出的字段，例如：</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; model_to_dict(User.objects.get(id=2), fields=['fullname','is_active'])
+{'is_active': True, 'fullname': '运维咖啡吧'}
+&gt;&gt;&gt; 
+&gt;&gt;&gt; model_to_dict(User.objects.get(id=2), exclude=['group','leader','id'])
+{'fullname': '运维咖啡吧', 'is_active': True, 'username': 'ops-coffee@163.com'}</code></pre>
+
+
+<p>但是会跳过有<code>editable=False</code>属性字段的展示，对于有<code>auto_now_add=True</code>和<code>auto_now=True</code>属性的datetime字段会默认添加<code>editable=False</code>隐藏属性，这也是上边两个time相关字段<code>create_time</code>和<code>update_time</code>转换成dict后不显示的原因，官方相关源码如下：</p>
+<pre class="codehilite"><code>for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+    if not getattr(f, 'editable', False):
+        continue</code></pre>
+
+
+<h1 id="to_dict">方法四：自定义to_dict</h1>
+<p>示例代码：</p>
+<pre class="codehilite"><code>from django.db.models.fields import DateTimeField
+from django.db.models.fields.related import ManyToManyField
+
+class User(models.Model):
+    ...
+
+    def to_dict(self, fields=None, exclude=None):
+        data = {}
+        for f in self._meta.concrete_fields + self._meta.many_to_many:
+            value = f.value_from_object(self)
+
+            if fields and f.name not in fields:
+                continue
+
+            if exclude and f.name in exclude:
+                continue
+
+            if isinstance(f, ManyToManyField):
+                value = [ i.id for i in value ] if self.pk else None
+
+            if isinstance(f, DateTimeField):
+                value = value.strftime('%Y-%m-%d %H:%M:%S') if value else None
+
+            data[f.name] = value
+
+        return data</code></pre>
+
+
+<p>执行结果：</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; User.objects.get(id=2).to_dict()
+{'is_active': True, 'update_time': '2018-10-12 21:21:39', 'username': 'ops-coffee@163.com', 'id': 2, 'leader': 1, 'group': [1, 3, 5], 'create_time': '2018-10-12 21:20:19', 'fullname': '运维咖啡吧'}
+&gt;&gt;&gt; 
+&gt;&gt;&gt; User.objects.get(id=2).to_dict(fields=['fullname','is_active','create_time'])
+{'is_active': True, 'fullname': '运维咖啡吧', 'create_time': '2018-10-12 21:20:19'}
+&gt;&gt;&gt; 
+&gt;&gt;&gt; User.objects.get(id=2).to_dict(exclude=['group','leader','id','create_time'])
+{'is_active': True, 'update_time': '2018-10-12 21:21:39', 'username': 'ops-coffee@163.com', 'fullname': '运维咖啡吧'}</code></pre>
+
+
+<p>拥有<code>model_to_dict</code>一样的便利性，同时也解决了不能输出time时间字段（editable=False）的问题，还能对value按照自己需要的格式输出，一举多得
+当然拥有便利性的同时需要自己实现<code>to_dict</code>的代码，增加了复杂度</p>
+<hr />
+<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
+- <a href="https://ops-coffee.cn/s/B_aNB8Y8snbSVLURONZ4Qg">Django model update的各种用法介绍</a>
+- <a href="https://ops-coffee.cn/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

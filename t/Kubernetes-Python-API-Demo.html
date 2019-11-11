@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Kubernetes,Python,API,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Kubernetes Python API中文使用说明" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Kubernetes Python API中文使用说明</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Kubernetes Python API中文使用说明" />
+  <meta property="og:description" content="Kubernetes Python API中文使用说明" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Kubernetes Python API中文使用说明</h1>
+      
+      
+      <p>本篇内容由<strong>Eagle</strong>整理，感谢他的辛勤付出</p>
+<h2 id="token">创建管理员用户，授权，获取Token</h2>
+<h3 id="_1">创建用户</h3>
+<pre class="codehilite"><code>vi CreateServiceAccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system</code></pre>
+
+
+<pre class="codehilite"><code>kubectl create -f CreateServiceAccount.yaml</code></pre>
+
+
+<h3 id="_2">用户授权</h3>
+<pre class="codehilite"><code>vi RoleBinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system</code></pre>
+
+
+<pre class="codehilite"><code>kubectl create -f RoleBinding.yaml</code></pre>
+
+
+<h3 id="token_1">获取Token</h3>
+<pre class="codehilite"><code>kubectl describe secret $(kubectl get secret -n kube-system | grep ^admin-user | awk '{print $1}') -n kube-system | grep -E '^token'| awk '{print $2}'</code></pre>
+
+
+<h2 id="kubernetes-python-sdk">安装kubernetes python sdk</h2>
+<h3 id="_3">模块安装</h3>
+<pre class="codehilite"><code>pip install kubernetes</code></pre>
+
+
+<h3 id="demo">测试demo</h3>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;  #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api(client.ApiClient(configuration))
+ret = k8s_api_obj.list_namespaced_pod(&quot;dev&quot;)
+print(ret)</code></pre>
+
+
+<h2 id="_4">接口操作案例</h2>
+<h3 id="namespace">创建namespace</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespace">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespace</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api(client.ApiClient(configuration))
+body = {
+    &quot;apiVersion&quot;: &quot;v1&quot;,
+    &quot;kind&quot;: &quot;Namespace&quot;,
+    &quot;metadata&quot;: {
+        &quot;name&quot;: &quot;test123&quot;,
+    }
+}
+
+ret = k8s_api_obj.create_namespace(body=body)
+print (ret)</code></pre>
+
+
+<h3 id="namespace_1">删除namespace</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api(client.ApiClient(configuration))
+body = client.V1DeleteOptions()
+body.api_version = &quot;v1&quot;
+body.grace_period_seconds = 0
+ret = k8s_api_obj.delete_namespace(&quot;test123&quot;, body=body)
+print(ret)</code></pre>
+
+
+<h3 id="namespace_2">查看namespace列表</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespace">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespace</a></p>
+<pre class="codehilite"><code>from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.CoreV1Api()
+limit = 56                                  #返回最大值,可选参数可以不写
+timeout_seconds = 56                                #超时时间可选参数
+watch = False                                   #监听资源，可选参数可以不填
+try:
+    api_response = k8s_api_obj.list_namespace(limit=limit,timeout_seconds=timeout_seconds, watch=watch)
+    for  namespace in api_response.items:
+        print(namespace.metadata.name)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;list_namespace: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="pod">创建pod</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.AppsV1beta2Api(client.ApiClient(configuration))
+body=eval(&quot;{'kind': 'Deployment', 'spec': {'replicas': 1, 'template': {'spec': {'containers': [{'image': 'nginx:1.7.9', 'name': 'nginx', 'ports': [{'contain
+erPort': 80}]}]}, 'metadata': {'labels': {'app': 'nginx-deployment'}}}, 'selector': {'matchLabels': {'app': 'nginx-deployment'}}}, 'apiVersion': 'apps/v1beta2', 'metadata': {'labels': {'app': 'nginx-deployment'}, 'namespace': 'default', 'name': 'nginx-deployment'}}&quot;)
+
+resp = k8s_api_obj.create_namespaced_deployment(body=body, namespace=&quot;default&quot;)
+print(resp)</code></pre>
+
+
+<h3 id="pod_1">删除pod</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#delete_namespaced_deployment">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#delete_namespaced_deployment</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+
+k8s_api_obj = client.AppsV1beta2Api(client.ApiClient(configuration))
+resp = k8s_api_obj.delete_namespaced_deployment(name=&quot;nginx-deployment&quot;,
+                                               namespace=&quot;default&quot;,
+                                               body=client.V1DeleteOptions(
+                                                       propagation_policy='Foreground',
+                                                       grace_period_seconds=0)
+                                               )
+print(resp)</code></pre>
+
+
+<h3 id="pod_2">更新pod</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#patch_namespaced_deployment">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#patch_namespaced_deployment</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.AppsV1beta2Api(client.ApiClient(configuration))
+
+body=eval(&quot;{'kind': 'Deployment', 'spec': {'replicas': 1, 'template': {'spec': {'containers': [{'image': 'nginx', 'name': 'nginx', 'ports': [{'containerPort
+': 80}]}]}, 'metadata': {'labels': {'app': 'nginx-deployment'}}}, 'selector': {'matchLabels': {'app': 'nginx-deployment'}}}, 'apiVersion': 'apps/v1beta2', 'metadata': {'labels': {'app': 'nginx-deployment'}, 'namespace': 'default', 'name': 'nginx-deployment'}}&quot;)
+
+resp = k8s_api_obj.patch_namespaced_deployment(
+                name=&quot;nginx-deployment&quot;,
+                namespace=&quot;default&quot;,
+                body=body
+            )
+print(resp)</code></pre>
+
+
+<h3 id="pod_3">查询pod</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespaced_pod">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespaced_pod</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api()
+resp = k8s_api_obj.list_namespaced_pod(&quot;default&quot;, label_selector=&quot;app=&quot; + &quot;nginx-deployment&quot;)
+print(resp)</code></pre>
+
+
+<h3 id="svc">创建svc</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespaced_service">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespaced_service</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.CoreV1Api()
+namespace = &quot;default&quot;
+body = {'apiVersion': 'v1', 'kind': 'Service', 'metadata': {'name': 'nginx-service', 'labels': {'app': 'nginx'}}, 'spec': {'ports': [{'port': 80, 'targetPor
+t': 80}], 'selector': {'app': 'nginx'}}}
+try:
+    api_response = k8s_api_obj.create_namespaced_service(namespace , body)
+    print(api_response)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;create_namespaced_service: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="svc_1">删除svc</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#delete_namespaced_service">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#delete_namespaced_service</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.CoreV1Api()
+name = 'nginx-service'                              #要删除svc名称
+namespace = 'default'                               #命名空间
+grace_period_seconds = 0                            #延迟时间,0立即删除
+body = client.V1DeleteOptions()                         #删除选项
+try:
+    api_response = k8s_api_obj.delete_namespaced_service(name, namespace,body,  grace_period_seconds=grace_period_seconds)
+    print(api_response)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;delete_namespaced_service: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="pod_4">pod列表</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#list_namespaced_deployment">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/AppsV1beta2Api.md#list_namespaced_deployment</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.AppsV1beta2Api(client.ApiClient(configuration))
+namespace = 'dev'                               #命名空间
+try:
+    api_response = k8s_api_obj.list_namespaced_deployment(namespace)
+    for deployment in api_response.items:
+        print(deployment.metadata.name)
+except ApiException as e:
+    print(&quot;Exception when calling AppsV1beta2Api-&gt;list_namespaced_deployment: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="configmap">创建ConfigMap</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespaced_config_map">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#create_namespaced_config_map</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api()
+body = {
+        'apiVersion': 'v1',
+        'kind': 'ConfigMap',
+        'metadata': {
+                'name': 'filebeat-configmap',
+                'namespace': 'default'
+        },
+        'data': {
+                'filebeat.yml': 'filebeat.prospectors: \n - input_type: log\ n paths: \n - &quot;/mnt/*/logs/app/app.log&quot;\n tags: [&quot;json&quot;]\ n json.keys_under_roo
+t: true\ n json.overwrite_keys: true\ noutput.elasticsearch: \n hosts: [&quot;xx.xx.xx.xx:9200&quot;]\ n username: &quot;elastic&quot;\n password: &quot;elastic&quot;\n template.enabled: false\ n index: &quot;dev_namespace_name_java_log-%{+yyyy.MM.dd}&quot;\n '}     
+   }
+
+
+resp = k8s_api_obj.create_namespaced_config_map(
+                body=body, namespace=&quot;default&quot;)
+print(resp)</code></pre>
+
+
+<h3 id="configmap_1">删除ConfigMap</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#delete_namespaced_config_map">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#delete_namespaced_config_map</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj  = client.CoreV1Api()
+resp = k8s_api_obj.delete_namespaced_config_map(
+                name=&quot;filebeat-configmap&quot;,
+                namespace=&quot;default&quot;,
+                body=client.V1DeleteOptions()
+            )
+print(resp)</code></pre>
+
+
+<h3 id="configmap_2">查看ConfigMap</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespaced_config_map">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#list_namespaced_config_map</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.CoreV1Api()
+namespace = 'default'
+try:
+    api_response = k8s_api_obj.list_namespaced_config_map(namespace)
+    for config_map in  api_response.items:
+        print(config_map.metadata.name)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;list_namespaced_config_map: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="node">获取Node节点信息</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#read_node">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#read_node</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+k8s_api_obj = client.CoreV1Api()
+exact = True
+export = True
+name = &quot;192.168.1.50&quot;               #此处填写node名称
+try:
+    api_response = k8s_api_obj.read_node(name, exact=exact, export=export)
+    print(api_response)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;read_node: %s\n&quot; % e)</code></pre>
+
+
+<h3 id="node_1">获取Node状态信息</h3>
+<p>官方文档：<a href="https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#read_node_status">https://github.com/kubernetes-client/python/blob/master/kubernetes/docs/CoreV1Api.md#read_node_status</a></p>
+<pre class="codehilite"><code>from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+ApiToken = &quot;xxxxx&quot;                              #ApiToken
+configuration = client.Configuration()
+setattr(configuration, 'verify_ssl', False)
+client.Configuration.set_default(configuration)
+configuration.host = &quot;https://xxxx:6443&quot;                    #ApiHost
+configuration.verify_ssl = False
+configuration.debug = True
+configuration.api_key = {&quot;authorization&quot;: &quot;Bearer &quot; + ApiToken}
+client.Configuration.set_default(configuration)
+
+name = &quot;192.168.1.50&quot;                               #此处填写node名称
+k8s_api_obj = client.CoreV1Api()
+try:
+    api_response = k8s_api_obj.read_node_status(name, pretty=True)
+    print(api_response)
+except ApiException as e:
+    print(&quot;Exception when calling CoreV1Api-&gt;read_node_status: %s\n&quot; % e)</code></pre>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

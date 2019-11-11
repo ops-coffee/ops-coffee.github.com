@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="LDAP,GitLab,OpenLDAP,SVN,LDAP,Git,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="LDAP落地实战（三）：GitLab集成OpenLDAP认证" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>LDAP落地实战（三）：GitLab集成OpenLDAP认证</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="LDAP落地实战（三）：GitLab集成OpenLDAP认证" />
+  <meta property="og:description" content="LDAP落地实战（三）：GitLab集成OpenLDAP认证" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">LDAP落地实战（三）：GitLab集成OpenLDAP认证</h1>
+      
+      
+      <blockquote>
+<p>上一篇文章介绍了SVN集成OpenLDAP认证，版本控制除了SVN外，Git目前也被越来越多的开发者所喜爱，本文将介绍GitLab如何集成OpenLDAP实现账号认证</p>
+</blockquote>
+<h1 id="gitlab">GitLab配置</h1>
+<ol>
+<li>修改配置文件gitlab.yml</li>
+</ol>
+<pre class="codehilite"><code>ldap:
+enabled: true
+servers:
+  main: 
+    label: 'LDAP'
+
+    host: 'ldap.ops-coffee.cn'
+    port: 389
+    uid: 'uid'
+    method: 'plain'
+    bind_dn: 'uid=authz,ou=Public,dc=ops-coffee,dc=cn'
+    password: 'ImNVZODT884'
+
+    timeout: 10
+
+    active_directory: false
+    allow_username_or_email_login: false
+
+    block_auto_created_users: false
+
+    base: 'dc=ops-coffee,dc=cn'
+    user_filter: ''</code></pre>
+
+
+<ol>
+<li>重启GitLab服务，看到页面已经有LDAP的登录选项了 </li>
+</ol>
+<p><img alt="" src="http://blz.nos-hz.163yun.com/sre/images/20180701.gitlab.png" /></p>
+<h2 id="_1">重要配置参数解释</h2>
+<p>仔细阅读上一篇svn集成LDAP认证的文章这些参数会更好理解</p>
+<ul>
+<li><strong>host</strong>：LDAP服务器地址</li>
+<li><strong>port</strong>：LDAP服务端口</li>
+<li><strong>uid</strong>：以哪个属性作为验证属性，可以为uid、cn等，我们使用uid</li>
+<li><strong>method</strong>：如果开启了tls或ssl则填写对应的tls或ssl，都没有就填写plain</li>
+<li><strong>bind_dn</strong>：search搜索账号信息的用户完整bind（需要一个有read权限的账号验证通过后搜索用户输入的用户名是否存在）</li>
+<li><strong>password</strong>：bind_dn用户的密码，<code>bind_dn</code>和<code>password</code>两个参数登录LDAP服务器搜索用户</li>
+<li><strong>active_directory</strong>：LDAP服务是否是windows的AD，我们是用的OpenLDAP，这里写false</li>
+<li><strong>allow_username_or_email_login</strong>：是否允许用户名或者邮箱认证，如果是则用户输入用户名或邮箱都可</li>
+<li><strong>base</strong>：从哪个位置搜索用户，例如允许登录GitLab的用户都在ou gitlab里，name这里可以写<code>ou=gitlab,dc=domain,dc=com</code></li>
+<li><strong>filter</strong>：添加过滤属性，例如只过滤employeeType为developer的用户进行认证，可以设置<code>employeeType=developer</code></li>
+</ul>
+<h2 id="_2">报错处理</h2>
+<p>当重启完成后登陆报：<code>Could not authenticate you from Ldapmain because "Invalid credentials"</code></p>
+<p>查日志有如下报错：<code>(LDAP) Error saving user: ["Email is not whitelisted. Email domains valid for registration are: domain.com"]</code></p>
+<p>Email不在白名单？？仔细想了一下原因：
+1. GitLab之前为了安全配置了 Restricted domains for sign-ups只允许domain.com邮箱的用户注册
+2. 而我OpenLDAP在新建用户的时候邮箱没有填写为空</p>
+<p>或许就是这个问题了，登录lam将用户的邮箱字段补上（需符合白名单规则）重新登录便正常了</p>
+<hr />
+<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

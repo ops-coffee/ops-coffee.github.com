@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,Signals,model,get,if,signals,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django使用Signals监测model字段变化发送通知" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django使用Signals监测model字段变化发送通知</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Django使用Signals监测model字段变化发送通知" />
+  <meta property="og:description" content="Django使用Signals监测model字段变化发送通知" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Django使用Signals监测model字段变化发送通知</h1>
+      
+      
+      <blockquote>
+<p>上一篇文章<a href="https://ops-coffee.cn/s/6ztLq8Q591KnlQY33-YFdQ">《运维效率之数据迁移自动化》</a>中讲到了工单通知，本文将介绍工单通知实现过程中的一些小技巧。所有演示均基于Django2.0</p>
+</blockquote>
+<p>阅读此篇文章你可以：
+- 解锁一个python if的使用新姿势
+- 获取一个利用signals做通知的真实案例</p>
+<h1 id="_1">背景说明</h1>
+<p>先看看工单表简化后的结构</p>
+<pre class="codehilite"><code>class Ticket(models.Model):
+    '''工单表'''
+
+    STATE = (
+        (1, '待审批'),
+        (2, '已撤销'),
+        (3, '已通过'),
+        (4, '被拒绝'),
+        (5, '已挂起'),
+        (6, '执行中'),
+        (7, '已完成'),
+        (8, '已失败')
+    )
+
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    create_user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='创建用户')
+
+    state = models.IntegerField(choices=STATE, default=1, verbose_name='工单状态')</code></pre>
+
+
+<p>Ticket工单表有一个state字段标识当前工单状态，这个状态会随着工单的进行而改变，每当工单状态改变时就需要发送通知给相应的用户，例如工单创建时，需要发送给创建者一个工单创建成功的通知，同时发送给审核者一个待审核的通知</p>
+<h1 id="_2">通知</h1>
+<p>每一个状态的变化都需要通知，为了代码易读及解耦，我们需要写一个单独的通知类，当需要通知的时候调用一下就好了。通知类中需要判断当前工单的状态，那么通常会写成下边这样</p>
+<pre class="codehilite"><code>class Notify:
+    def __init__(self):
+        self.dba_list = [&quot;dba1@ops-coffee.cn&quot;, &quot;dba2@ops-coffee.cn&quot;]
+
+    def migration(self, pk):
+        '''迁移通知'''
+
+        _t = Ticket.objects.get(id=pk)
+        _u = _t.create_user.username
+        _s = _t.state
+
+        _d = &quot;https://ops-coffee.cn/workflow/migration/%d/&quot; % (_t.id)
+
+        if _s == 1:
+            try:
+                Email(
+                    subject=&quot;[已提交]-[overmind]数据迁移工单&quot;,
+                    content=&quot;你的数据迁移工单已提交，正在等待DBA审批，后续有状态变更将会自动通知你。\r\n\r\n工单详情：%s&quot; % _d,
+                    reciever_list=[_u]
+                )
+            except Exception as e:
+                print('Error:' + str(e))
+
+            try:
+                Email(
+                    subject=&quot;[待审批]-[overmind]数据迁移工单&quot;,
+                    content=&quot;你有工单需要审批，点击下方工单详情链接及时审批。\r\n\r\n工单详情：%s&quot; % _d,
+                    reciever_list=self.dba_list
+                )
+            except Exception as e:
+                print('Error:' + str(e))
+        elif _s == 6:
+            try:
+                Email(
+                    subject=&quot;[执行中]-[overmind]数据迁移工单&quot;,
+                    content=&quot;数据迁移工单已通过DBA审核，正在执行中，后续有状态变更将会自动通知你。\r\n\r\n工单详情：%s&quot; % _d,
+                    reciever_list=[_u] + self.dba_list,
+                )
+            except Exception as e:
+                print('Error:' + str(e))
+        elif _s == 7:
+            try:
+                Email(
+                    subject=&quot;[已完成]-[overmind]数据迁移工单&quot;,
+                    content=&quot;数据迁移工单已自动完成迁移，请检查最终状态，如有任何疑问随时联系DBA。\r\n\r\n工单详情：%s&quot; % _d,
+                    reciever_list=[_u] + self.dba_list,
+                )
+            except Exception as e:
+                print('Error:' + str(e))</code></pre>
+
+
+<p>以上的代码可以看出来写了很多重复的try代码，并且当状态越多，if判断越复杂时重复的代码也会越来越多，有没有更简洁的方式呢？</p>
+<p>看看下边的代码，维护一个状态字典，然后用一个if判断就可以实现上边一堆if的代码写法，是不是就简洁了很多</p>
+<pre class="codehilite"><code>class Notify:
+    def __init__(self):
+        self.dba_list = [&quot;dba1@ops-coffee.cn&quot;, &quot;dba2@ops-coffee.cn&quot;]
+
+    def migration(self, pk):
+        '''迁移通知'''
+
+        _t = Ticket.objects.get(id=pk)
+        _u = _t.create_user.username
+        _s = _t.state
+
+        _d = &quot;https://ops-coffee.cn/workflow/migration/%d/&quot; %(_t.id)
+        smap = {
+            1: [{
+                &quot;subject&quot;: &quot;[已提交]-[overmind]数据迁移工单&quot;,
+                &quot;content&quot;: &quot;你的数据迁移工单已提交，正在等待DBA审批，后续有状态变更将会自动通知你。\r\n\r\n工单详情：%s&quot; %_d,
+                &quot;reciever_list&quot;: [_u],
+            }, {
+                &quot;subject&quot;: &quot;[待审批]-[overmind]数据迁移工单&quot;,
+                &quot;content&quot;: &quot;你有工单需要审批，点击下方工单详情链接及时审批。\r\n\r\n工单详情：%s&quot; %_d,
+                &quot;reciever_list&quot;: self.dba_list,
+            }],
+            6: [{
+                &quot;subject&quot;: &quot;[执行中]-[overmind]数据迁移工单&quot;,
+                &quot;content&quot;: &quot;数据迁移工单已通过DBA审核，正在执行中，后续有状态变更将会自动通知你。\r\n\r\n工单详情：%s&quot; %_d,
+                &quot;reciever_list&quot;: [_u] + self.dba_list,
+            }],
+            7: [{
+                &quot;subject&quot;: &quot;[已完成]-[overmind]数据迁移工单&quot;,
+                &quot;content&quot;: &quot;数据迁移工单已自动完成迁移，请检查最终状态，如有任何疑问随时联系DBA。\r\n\r\n工单详情：%s&quot; %_d,
+                &quot;reciever_list&quot;: [_u] + self.dba_list,
+            }]
+        }
+
+        _list = smap[_s]
+        for i in range(0, len(_list)):
+            try:
+                Email(
+                    subject=_list[i]['subject'], 
+                    content=_list[i]['content'], 
+                    reciever_list=_list[i]['reciever_list']
+                )
+            except Exception as e:
+                print('Error:' +str(e))</code></pre>
+
+
+<p>在构造字典的时候采用了状态做key，通知变量做value，同时一个状态可能会产生多个不同的通知，所以value采用列表的方式，这样即可轻松实现一个状态多条通知，每条通知都可以发给不同的人，有不同的主题，不同的内容。</p>
+<h1 id="signals">Signals</h1>
+<p>上边我们已经写好了发送通知的类，在view里每次修改工单状态之后调用下通知类即可实现通知发送，但这样通知跟view强耦合，且通知会分散在view中的多个地方，造成代码冗余且不够优雅。我们需要一个简单优雅的方式来实现，signals可以说是非常有用了</p>
+<p>Signals是Django自带的一个信号调度程序。如果你对svn或者git之类的hooks有了解，这个理解起来就简单多了，通俗来说就是当你的程序产生一个事件时，会通过signals自动触发其他的事件。就比如我们这个工单系统通知，当工单状态产生变化时自动发送邮件给相关人。</p>
+<p>Django内部已经定义好了一些signal供我们使用，如果不能满足我们也可以自定义signal，其中Django内部定义的signal主要分为几类
+1. model signals
+    - <code>pre_init</code>：model初始化前触发
+    - <code>post_init</code>：model初始化后触发
+    - <code>pre_save</code>：save()方法前触发
+    - <code>post_save</code>：save()方法后触发
+    - <code>pre_delete</code>：delete()方法前触发
+    - <code>post_delete</code>：delete()方法后触发
+    - <code>m2m_changed</code>：ManyToManyField字段改变时触发
+    - <code>class_prepared</code>：没用过字面意思理解吧
+2. management signals
+    - <code>pre_migrate</code>：migrate之前触发
+    - <code>post_migrate</code>：migrate之后触发
+3. request/response signals
+    - <code>request_started</code>：请求开始时触发
+    - <code>request_finished</code>：请求完成后触发
+    - <code>got_request_exception</code>：请求异常时触发
+4. test signals
+    - <code>setting_changed</code>：配置改变时触发
+    - <code>template_rendered</code>：模板渲染时触发
+5. Database Wrappers
+    - <code>connection_created</code>：连接建立时触发</p>
+<p>那么信号究竟该如何使用呢？下边一个实际的例子来说明下信号的使用</p>
+<p>就以我们发送通知的需求为例，workflow是一个普通的app，第一步需要新建<code>workflow/signals.py</code>文件绑定signal</p>
+<pre class="codehilite"><code>from django.db.models import signals
+from django.dispatch import receiver
+
+from workflow.models import Ticket
+from workflow.backends.notify import Notify
+
+
+@receiver(signals.post_init, sender=Ticket)
+def migrate_notify_init(instance, **kwargs):
+    instance.old_state = instance.state
+
+
+@receiver(signals.post_save, sender=Ticket)
+def migrate_notify_post(instance, created, **kwargs):
+    if created or instance.old_state != instance.state:
+        Notify().migration(instance.id)</code></pre>
+
+
+<p>这里用到了两个signal，<code>post_init</code>和<code>post_save</code></p>
+<p>在model初始化之后通过<code>post_init</code>信号获取到state的值作为初始状态值，在每次model执行save方法后调用<code>post_save</code>信号获取到新的状态值，对两次状态值做比较如果不一致则表示状态有更新发送通知</p>
+<p>是上边的判断只能判断到状态变更了发通知，但工单在第一次创建时old_state和state是一样的，所以也需要在save之后判断下这次操作是不是新建，如果是新建同样需要发送通知</p>
+<p>第二步加载signal，需要修改两个配置文件</p>
+<p>config1：<code>workflow/apps.py</code></p>
+<pre class="codehilite"><code>from django.apps import AppConfig
+
+
+class WorkflowConfig(AppConfig):
+    name = 'workflow'
+
+    def ready(self):
+        import workflow.signals</code></pre>
+
+
+<p>config2：<code>workflow/__init__.py</code></p>
+<pre class="codehilite"><code>default_app_config = 'workflow.apps.WorkflowConfig'</code></pre>
+
+
+<p>绑定成功后就可以在每次工单状态发生变化时发送邮件了</p>
+<hr />
+<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
+- <a href="https://ops-coffee.cn/s/7gPLaCESHAB0dLgq7qZq5Q">Django model转字典的几种方法</a>
+- <a href="https://ops-coffee.cn/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a></p>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
