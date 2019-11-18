@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Asciinema,Web,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Asciinema文章勘误及Web端使用介绍" />
+  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Asciinema文章勘误及Web端使用介绍</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:title" content="Asciinema文章勘误及Web端使用介绍" />
+  <meta property="og:description" content="Asciinema文章勘误及Web端使用介绍" />
+  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <!-- End SEO tag -->
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+  
+  <!--
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  -->
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <a href="https://ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+      
+        <h1 id="art-title">Asciinema文章勘误及Web端使用介绍</h1>
+      
+      
+      <blockquote>
+<p>欠下的债迟早是要还的，查文档，重验证，出结果，不误导</p>
+</blockquote>
+<h2 id="_1">文章勘误</h2>
+<p>在上一篇文章<a href="https://ops-coffee.cn/s/oqZqGiQ3uNrNuT-nGrh9lg">Asciinema：你的所有操作都将被录制</a>中有两个地方表述有错误或瑕疵，这里更正一下</p>
+<p>第一个地方为录制时的参数<code>--stdin</code>，参数的意思是启用标准输入录制，原文中说看不到效果，可能官方还未支持，实际上官方已经支持了，且查看录制文件内容时可以看到区别，以下两个对比的例子来说明</p>
+<p>例一：执行下方的命令进行录制，录制开始之后执行ssh命令输入密码连接另一台主机</p>
+<pre class="codehilite"><code>asciinema rec ops-coffee.cast</code></pre>
+
+
+<p>执行<code>asciinema cat</code>命令查看执行命令</p>
+<pre class="codehilite"><code># asciinema cat ops-coffee.cast 
+root@onlinegame:~# ssh root@192.168.106.192 ls ops-coffee.cn
+root@192.168.106.192's password: 
+ops-coffee.cn
+root@onlinegame:~# exit
+exit</code></pre>
+
+
+<p>打印录制的文件内容如下：</p>
+<pre class="codehilite"><code># cat ops-coffee.cast 
+{&quot;version&quot;: 2, &quot;width&quot;: 237, &quot;height&quot;: 55, &quot;timestamp&quot;: 1574060513, &quot;env&quot;: {&quot;SHELL&quot;: &quot;/bin/bash&quot;, &quot;TERM&quot;: &quot;linux&quot;}}
+[0.012221, &quot;o&quot;, &quot;root@onlinegame:~# &quot;]
+[0.607184, &quot;o&quot;, &quot;exit&quot;]
+[1.07092, &quot;o&quot;, &quot;\b\b\b\bssh root@192.168.106.192 ls ops-coffee.cn&quot;]
+[1.703405, &quot;o&quot;, &quot;\r\n&quot;]
+[1.762974, &quot;o&quot;, &quot;root@192.168.106.192's password: &quot;]
+[4.550759, &quot;o&quot;, &quot;\r\n&quot;]
+[4.558138, &quot;o&quot;, &quot;ops-coffee.cn\r\n&quot;]
+[4.559187, &quot;o&quot;, &quot;root@onlinegame:~# &quot;]
+[5.182817, &quot;o&quot;, &quot;e&quot;]
+[5.582643, &quot;o&quot;, &quot;x&quot;]
+[5.838648, &quot;o&quot;, &quot;i&quot;]
+[6.03067, &quot;o&quot;, &quot;t&quot;]
+[6.759346, &quot;o&quot;, &quot;\r\nexit\r\n&quot;]</code></pre>
+
+
+<p>例二：执行同样的命令，加上<code>--stdin</code>参数</p>
+<pre class="codehilite"><code>asciinema rec --stdin ops-coffee.1.cast</code></pre>
+
+
+<p>执行<code>asciinema cat</code>命令查看执行命令</p>
+<pre class="codehilite"><code># asciinema cat ops-coffee.1.cast 
+root@onlinegame:~# ssh root@192.168.106.192 ls ops-coffee.cn
+root@192.168.106.192's password: 
+ops-coffee.cn
+root@onlinegame:~# exit
+exit</code></pre>
+
+
+<p>这次再看录制文件的内容：</p>
+<pre class="codehilite"><code># cat ops-coffee.1.cast
+{&quot;version&quot;: 2, &quot;width&quot;: 237, &quot;height&quot;: 55, &quot;timestamp&quot;: 1574060808, &quot;env&quot;: {&quot;SHELL&quot;: &quot;/bin/bash&quot;, &quot;TERM&quot;: &quot;linux&quot;}}
+[0.01012, &quot;o&quot;, &quot;root@onlinegame:~# &quot;]
+[1.654752, &quot;i&quot;, &quot;\u001b[A&quot;]
+[1.654971, &quot;o&quot;, &quot;exit&quot;]
+[2.014568, &quot;i&quot;, &quot;\u001b[A&quot;]
+[2.014727, &quot;o&quot;, &quot;\b\b\b\bssh root@192.168.106.192 ls ops-coffee.cn&quot;]
+[3.7185, &quot;i&quot;, &quot;\r&quot;]
+[3.719167, &quot;o&quot;, &quot;\r\n&quot;]
+[3.781231, &quot;o&quot;, &quot;root@192.168.106.192's password: &quot;]
+[5.198467, &quot;i&quot;, &quot;s&quot;]
+[5.542343, &quot;i&quot;, &quot;m&quot;]
+[5.774451, &quot;i&quot;, &quot;i&quot;]
+[5.85435, &quot;i&quot;, &quot;l&quot;]
+[5.990628, &quot;i&quot;, &quot;e&quot;]
+[6.342587, &quot;i&quot;, &quot;\r&quot;]
+[6.342817, &quot;o&quot;, &quot;\r\n&quot;]
+[6.351245, &quot;o&quot;, &quot;ops-coffee.cn\r\n&quot;]
+[6.351475, &quot;o&quot;, &quot;root@onlinegame:~# &quot;]
+[7.182384, &quot;i&quot;, &quot;e&quot;]
+[7.182585, &quot;o&quot;, &quot;e&quot;]
+[7.461976, &quot;i&quot;, &quot;x&quot;]
+[7.462183, &quot;o&quot;, &quot;x&quot;]
+[7.543019, &quot;i&quot;, &quot;i&quot;]
+[7.543306, &quot;o&quot;, &quot;i&quot;]
+[7.686868, &quot;i&quot;, &quot;t&quot;]
+[7.68703, &quot;o&quot;, &quot;t&quot;]
+[7.87045, &quot;i&quot;, &quot;\r&quot;]
+[7.871348, &quot;o&quot;, &quot;\r\nexit\r\n&quot;]</code></pre>
+
+
+<p>会发现在实际执行命令完全一致的情况下，录像文件与上一个没有加<code>--stdin</code>时的不一样，其中就多了输入密码的记录<code>smile</code></p>
+<p>且在asciinema文件IO流信息的第二个字段不仅有了<code>o</code>，还有<code>i</code>的出现，上一篇文章讲到<code>o</code>是一个固定字符串不知道作用，经过深入查询确认，IO信息流的第二个字段就是固定string字符串，且只会是<code>i</code>或<code>o</code>之间的一种，分别表示<code>stdin</code>标准输入或<code>stdout</code>标准输出</p>
+<p><code>--stdin</code>的效果无论是通过<code>asciinema play</code>命令播放或是<code>asciinema cat</code>命令查看都是无法察觉的，在实现WebSSH录像回放时又对录像文件进行了深入研究，最终发现问题，这里查漏补缺，予以更正，对于之前的错误，深表歉意</p>
+<h2 id="web">Web端使用</h2>
+<p>asciinema录制文件在web端播放是通过<code>asciinema-player</code>组件来实现的，使用也是非常的简单</p>
+<p>分别引入css和js文件，添加一个<code>asciinema-player</code>的标签即可播放标签内文件的录像</p>
+<pre class="codehilite"><code>&lt;html&gt;
+&lt;head&gt;
+  ...
+  &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/asciinema-player.css&quot; /&gt;
+  ...
+&lt;/head&gt;
+&lt;body&gt;
+  ...
+  &lt;asciinema-player src=&quot;/ops-coffee.cast&quot;&gt;&lt;/asciinema-player&gt;
+  ...
+  &lt;script src=&quot;/asciinema-player.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+<p>asciinema-player标签内可以添加如下一些属性：</p>
+<p><strong>cols：</strong> 播放终端的列数，默认为80，如果cast文件的header头有设置<code>width</code>，这里无需设置</p>
+<p><strong>rows：</strong> 播放终端的行数，默认为24，如果cast文件的header头有设置<code>height</code>，这里无需设置</p>
+<p><strong>autoplay：</strong> 是否自动开始播放，默认不会自动播放</p>
+<p><strong>preload：</strong> 预加载，如果你想为录像配音，这里可以预加载声音</p>
+<p><strong>loop：</strong> 是否循环播放，默认不循环</p>
+<p><strong>start-at：</strong> 从哪个地方开始播放，可以是<code>123</code>这样的秒数或者是<code>1:06</code>这样的时间点</p>
+<p><strong>speed：</strong> 播放的速度，类似于play命令播放时的<code>-s</code>参数</p>
+<p><strong>idle-time-limit：</strong> 最大空闲秒数，类似于play命令播放时的<code>-i</code>参数</p>
+<p><strong>poster：</strong> 播放之前的预览，可以是<code>npt:1:06</code>这样给定时间点的画面，也可以是<code>data:text/plain,ops-coffee.cn</code>这样给定的文字，其中文字支持ANSI编码，例如可以给文字加上颜色<code>data:text/plain,\x1b[1;32mops-coffee.cn\x1b[1;0m</code></p>
+<p><strong>font-size：</strong> 文字大小，可以是<code>small</code>、<code>medium</code>、<code>big</code>或者直接是<code>14px</code>这样的css样式大小</p>
+<p><strong>theme：</strong> 终端颜色主题，默认是<code>asciinema</code>，也提供有<code>tango</code>、<code>solarized-dark</code>、<code>solarized-light</code>或者<code>monokai</code>可选择，当然你也可以自定义主题</p>
+<p>还有几个参数<strong>title</strong>、<strong>author</strong>、<strong>author-url</strong>、<strong>author-img-url</strong>分别表示了录像的标题、作者、作者的主页、作者的头像，这些配置会在全屏观看录像时显示在标题栏中，像下边这样</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20191118.png" /></p>
+<p>最后使用以下参数设置asciinema-player，看看播放的效果</p>
+<pre class="codehilite"><code>&lt;asciinema-player id=&quot;play&quot; 
+    title=&quot;WebSSH Record&quot; 
+    author=&quot;ops-coffee.cn&quot; 
+    author-url=&quot;https://ops-coffee.cn&quot; 
+    author-img-url=&quot;/static/img/logo.png&quot; 
+    src=&quot;/static/record/ops-coffee.cast&quot; 
+    speed=&quot;3&quot; idle-time-limit=&quot;2&quot; 
+    poster=&quot;data:text/plain,\x1b[1;32m2019-11-18 16:26:18\x1b[1;0m用户\x1b[1;32madmin\x1b[1;0m连接主机\x1b[1;32m192.168.106.101:22\x1b[1;0m的录像记录&quot;&gt;
+&lt;/asciinema-player&gt;</code></pre>
+
+
+<p>播放效果如下</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20191118.gif" /></p>
+<p>同时asciinema-player播放时还支持以下快捷键的使用</p>
+<ul>
+<li><code>space</code> 空格，播放或暂停</li>
+<li><code>f</code> 全屏播放，可以看到title等设置</li>
+<li><code>←</code> / <code>→</code> 快进或快退，每次5秒</li>
+<li><code>0，1，6 ... 9</code> 跳转到录像的0%，10%，60% ... 90%</li>
+<li><code>&lt;</code> / <code>&gt;</code> 增加或降低播放速度，play的<code>-s</code>参数</li>
+</ul>
+<hr />
+<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
+<p>相关文章推荐阅读：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/FHDyvHsh-oO1cn7AXk_4WA">Django实现WebSSH操作Kubernetes Pod</a></li>
+<li><a href="https://ops-coffee.cn/s/a3eJjVTtuUjzwyk21nTBqQ">Django实现WebSSH操作物理机或虚拟机</a></li>
+</ul>
+      </section>
+
+      <aside id="sidebar">
+        <blockquote class="route">作者介绍</blockquote>
+        <p>37丫37，现居上海，专职运维，涉猎广泛，重原则，有态度</p>
+        <p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+        <img border="0" src="https://blz.nosdn.127.net/sre/posts/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+        <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+        <blockquote class="route">归档列表</blockquote>
+        <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
+        <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
+        
+        <blockquote class="route">锟斤拷锟斤</blockquote>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- sidebar -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-8944257246828217"
+             data-ad-slot="1313935804"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="inner">
+      <div class="copy"> © 2019 ops-coffee</div>
+    
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
