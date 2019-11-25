@@ -7,18 +7,18 @@
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
   <meta name="applicable-device" content="pc,mobile">
-  <meta name="keywords" content="运维咖啡吧,ops-coffee,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
-  <meta name="description" content="追求技术的道路上，我从不曾停下脚步" />
+  <meta name="keywords" content="pip,python,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="更新pip源让python包下载更畅快" />
   <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
   <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/posts/images/favicon.ico" />
 
   <!-- Begin SEO tag -->
-  <title>运维咖啡吧</title>
+  <title>更新pip源让python包下载更畅快</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
   <meta property="og:url" content="https://ops-coffee.cn/" />
-  <meta property="og:title" content="运维咖啡吧" />
-  <meta property="og:description" content="追求技术的道路上，我从不曾停下脚步" />
+  <meta property="og:title" content="更新pip源让python包下载更畅快" />
+  <meta property="og:description" content="更新pip源让python包下载更畅快" />
   <link rel="canonical" href="https://ops-coffee.cn/" />
   <!-- End SEO tag -->
 
@@ -51,20 +51,23 @@
     <div class="inner clearfix">
       <section id="main-content">
       
+        <h1 id="art-title">更新pip源让python包下载更畅快</h1>
+      
 
-      <ul>
-<li><a href="/t/change-pip-source.html" target="_blank" rel="noreferrer">更新pip源让python包下载更畅快</a></li>
-<li><a href="/t/Kubernetes-Python-API-Demo.html" target="_blank" rel="noreferrer">Kubernetes Python API中文使用说明</a></li>
-<li><a href="/t/debian8-jessie-install-java8.html" target="_blank" rel="noreferrer">Debian 8 Jessie安装Java8</a></li>
-<li><a href="/t/tar-file-openssl-des3.html" target="_blank" rel="noreferrer">Openssl Des3对压缩文件进行加密命令详解</a></li>
-<li><a href="/t/django-model-field-comment.html" target="_blank" rel="noreferrer">django model字段添加备注Comment</a></li>
-<li><a href="/t/python-pass-by-reference.html" target="_blank" rel="noreferrer">python中的引用传递</a></li>
-<li><a href="/t/git-readme-specification.html" target="_blank" rel="noreferrer">git工程README结构规范</a></li>
-<li><a href="/t/elasticsearch-cat-api.html" target="_blank" rel="noreferrer">Elasticsearch各Cat命令详解</a></li>
-<li><a href="/t/django-custom-error-page.html" target="_blank" rel="noreferrer">Django自定义错误页面配置</a></li>
-<li><a href="/t/remove-github-commit-log.html" target="_blank" rel="noreferrer">清除github所有历史提交记录的方法</a></li>
-<li><a href="/t/server-ssh-specification.html" target="_blank" rel="noreferrer">服务器SSH密钥管理规范</a></li>
-</ul>
+      <p>更新源的方式主要有两种</p>
+<ol>
+<li>临时更新</li>
+</ol>
+<pre class="codehilite"><code># pip3 install -r requirements.txt -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com</code></pre>
+
+
+<ol>
+<li>永久更新</li>
+</ol>
+<pre class="codehilite"><code># cat ~/.pip/pip.conf 
+[global]
+# index-url = http://mirrors.aliyun.com/pypi/simple/ 
+index-url = http://pypi.douban.com/simple/</code></pre>
       </section>
 
       <aside id="sidebar">
