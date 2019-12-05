@@ -1,6 +1,7 @@
 https://ops-coffee.cn/
 https://ops-coffee.cn/s/
 https://ops-coffee.cn/t/
+https://ops-coffee.cn/t/debian8-jessie-install-python3.html
 https://ops-coffee.cn/s/GXhkc8rBHhjjf_wHxd7j3w.html
 https://ops-coffee.cn/t/change-pip-source.html
 https://ops-coffee.cn/s/KroFrAGIvygb_a__Wcoe0A.html
