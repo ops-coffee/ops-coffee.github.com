@@ -21,7 +21,24 @@
   <meta property="og:description" content="追求技术的道路上，我从不曾停下脚步" />
   <link rel="canonical" href="https://ops-coffee.cn/" />
   <!-- End SEO tag -->
-  
+
+  <style type="text/css">
+    .aspect-ratio {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 75%;
+    }
+    
+    .aspect-ratio iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+  </style>
+
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
   <script>
@@ -49,7 +66,9 @@
 
   <div class="warp">
     <div class="container">
-        <iframe src="//player.bilibili.com/player.html?aid=78686836&cid=134635458&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+        <div class="aspect-ratio">
+            <iframe src="//player.bilibili.com/player.html?aid=78686836&cid=134635458&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+        </div>
     </div>
   </div>
 
