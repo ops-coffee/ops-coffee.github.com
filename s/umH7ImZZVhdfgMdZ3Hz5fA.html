@@ -60,7 +60,7 @@
 <h1 id="elk">ELK介绍</h1>
 <p>ELK最早是Elasticsearch（以下简称ES）、Logstash、Kibana三款开源软件的简称，三款软件后来被同一公司收购，并加入了Xpark、Beats等组件，改名为Elastic Stack，成为现在最流行的开源日志解决方案，虽然有了新名字但大家依然喜欢叫她ELK，现在所说的ELK就指的是基于这些开源软件构建的日志系统。</p>
 <p>我们收集mysql慢日志的方案如下：</p>
-<p><img alt="" src="http://blz.nos.netease.com/sre/20180810/slowlog_elk.png" /></p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180810.elk.png" /></p>
 <ul>
 <li>mysql服务器安装Filebeat作为agent收集slowLog</li>
 <li>Filebeat读取mysql慢日志文件做简单过滤传给Kafka集群</li>
@@ -207,23 +207,21 @@ output {
 </ul>
 <h1 id="kibana">kibana查询展示</h1>
 <ul>
-<li>
-<p>打开Kibana添加<code>mysql-slowlog-*</code>的Index，并选择timestamp，创建Index Pattern
-<img alt="" src="http://blz.nos.netease.com/sre/20180810/slowlog_00.png" /></p>
-</li>
-<li>
-<p>进入Discover页面，可以很直观的看到各个时间点慢日志的数量变化，可以根据左侧Field实现简单过滤，搜索框也方便搜索慢日志，例如我要找查询时间大于2s的慢日志，直接在搜索框输入<code>query_time: &gt; 2</code>回车即可
-<img alt="" src="http://blz.nos.netease.com/sre/20180810/slowlog_01.png" /></p>
-</li>
-<li>
-<p>点击每一条日志起边的很色箭头能查看具体某一条日志的详情
-<img alt="" src="http://blz.nos.netease.com/sre/20180810/slowlog_02.png" /></p>
-</li>
-<li>
-<p>如果你想做个大盘统计慢日志的整体情况，例如top 10 SQL等，也可以很方便的通过web界面配置
-<img alt="" src="http://blz.nos.netease.com/sre/20180810/slowlog_03.png" /></p>
-</li>
+<li>打开Kibana添加<code>mysql-slowlog-*</code>的Index，并选择timestamp，创建Index Pattern</li>
 </ul>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180810.00.png" /></p>
+<ul>
+<li>进入Discover页面，可以很直观的看到各个时间点慢日志的数量变化，可以根据左侧Field实现简单过滤，搜索框也方便搜索慢日志，例如我要找查询时间大于2s的慢日志，直接在搜索框输入<code>query_time: &gt; 2</code>回车即可</li>
+</ul>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180810.01.png" /></p>
+<ul>
+<li>点击每一条日志起边的很色箭头能查看具体某一条日志的详情</li>
+</ul>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180810.02.png" /></p>
+<ul>
+<li>如果你想做个大盘统计慢日志的整体情况，例如top 10 SQL等，也可以很方便的通过web界面配置</li>
+</ul>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180810.03.png" /></p>
 <h1 id="_5">总结</h1>
 <ol>
 <li>不要望而却步，当你开始去做已经成功一半了</li>
@@ -246,7 +244,7 @@ output {
         <blockquote class="route">归档列表</blockquote>
         <div class="sidebar-list"><a href="/s"> 精选文章列表</a></div>
         <div class="sidebar-list"><a href="/t/"> 日常运维记录</a></div>
-        <div class="sidebar-list"><a href="/webssh"> WebSSH系列精选</a></div>
+        <div class="sidebar-list"><a href="/webssh"> WebSSH系列</a></div>
 
         <blockquote class="route">锟斤拷锟斤</blockquote>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
