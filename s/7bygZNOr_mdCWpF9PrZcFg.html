@@ -121,17 +121,21 @@
 </table>
 <p>从上到下级别依次从低到高，日志量从多到少，正确选择日志级别帮助后期快速排查问题</p>
 <h2 id="_2">我们为什么要制定这样的规范？</h2>
-<p><img alt="" src="http://blz.nos.netease.com/sre/20180905/image.png" />
-1. 我们的项目都跑在Docker里，Docker镜像由基础镜像+项目代码组成
-2. 基础镜像打包了运行项目的基础环境，例如spring cloud微服务项目，则打包了jre服务
-3. 规范了日志存放及输出后，我们可以把作为日志收集agent的filebeat一并打包进基础镜像，因为同一类型项目的日志路径、格式都是一致的，filebeat配置文件可以通用
-4. 这样我们在后续的部署过程中就不需要关心日志相关的内容，只要项目镜像引用了这个基础镜像就能自动接入了我们的日志服务，实现日志的收集、处理、存储与展示</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180905.00.png" /></p>
+<ol>
+<li>我们的项目都跑在Docker里，Docker镜像由基础镜像+项目代码组成</li>
+<li>基础镜像打包了运行项目的基础环境，例如spring cloud微服务项目，则打包了jre服务</li>
+<li>规范了日志存放及输出后，我们可以把作为日志收集agent的filebeat一并打包进基础镜像，因为同一类型项目的日志路径、格式都是一致的，filebeat配置文件可以通用</li>
+<li>这样我们在后续的部署过程中就不需要关心日志相关的内容，只要项目镜像引用了这个基础镜像就能自动接入了我们的日志服务，实现日志的收集、处理、存储与展示</li>
+</ol>
 <h1 id="_3">日志采集</h1>
-<p>我们通用日志采集方案如下图：
-<img alt="" src="http://blz.nos.netease.com/sre/20180905/elk.jpg" />
-1. 程序跑在容器里，容器内自带Filebeat程序收集日志
-2. 收集完成后传给kafka集群，logstash读取kafka集群数据写入elasticsearch集群
-3. kibana读取elasticsearch集群数据展示在web上，开发、运维等需要查看日志的用户登录kibana查看</p>
+<p>我们通用日志采集方案如下图：</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180905.00.jpg" /></p>
+<ol>
+<li>程序跑在容器里，容器内自带Filebeat程序收集日志</li>
+<li>收集完成后传给kafka集群，logstash读取kafka集群数据写入elasticsearch集群</li>
+<li>kibana读取elasticsearch集群数据展示在web上，开发、运维等需要查看日志的用户登录kibana查看</li>
+</ol>
 <p><strong>Client端Filebeat配置</strong></p>
 <pre class="codehilite"><code>filebeat.prospectors:
 
@@ -181,8 +185,8 @@ output {
 
 <p>都是基础配置很简单，不做过多解释，通过以上简单的配置就能实现任何应用程序的日志收集</p>
 <h1 id="_4">日志展示</h1>
-<p>收集日志到elasticsearch之后，就可以通过kibana配置展示应用程序的日志了，方便开发及时发现问题，在线定位问题
-<img alt="" src="http://blz.nos.netease.com/sre/20180905/discover.png" /></p>
+<p>收集日志到elasticsearch之后，就可以通过kibana配置展示应用程序的日志了，方便开发及时发现问题，在线定位问题</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180905.02.png" /></p>
 <h1 id="_5">写在最后</h1>
 <ol>
 <li>通用的基础与前提是规范，规范做好了事半功倍</li>
