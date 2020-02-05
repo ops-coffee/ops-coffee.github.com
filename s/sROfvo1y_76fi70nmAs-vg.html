@@ -68,12 +68,16 @@
 </blockquote>
 <h1 id="_1">监控的思考</h1>
 <p>通常我们会在项目所在的机房部署一套监控系统来监控我们服务器和MySQL之类的公共服务，制定报警策略，在出现异常情况的时候邮件或短信提醒我们及时处理。</p>
-<p>此类监控主要的关注点有两个：
-1. 资源的占用情况，例如负载高低、内存大小、磁盘空间等
-2. 服务的状态监控，例如Nginx状态、Mysql主从状态等</p>
-<p>同时也会存在以下两个主要问题：
-1. 缺少业务状态的监控，不能很直观的知道业务当前的状态，可能服务器、服务都正常但业务确挂了
-2. 监控服务器和业务服务器处于同一机房环境内，监控网络故障、入口网络拥堵等情况都可能会导致收不到监控系统的报警，且只能监控机房内的情况，用户到机房入口的情况无法监控</p>
+<p>此类监控主要的关注点有两个：</p>
+<ol>
+<li>资源的占用情况，例如负载高低、内存大小、磁盘空间等</li>
+<li>服务的状态监控，例如Nginx状态、Mysql主从状态等</li>
+</ol>
+<p>同时也会存在以下两个主要问题：</p>
+<ol>
+<li>缺少业务状态的监控，不能很直观的知道业务当前的状态，可能服务器、服务都正常但业务确挂了</li>
+<li>监控服务器和业务服务器处于同一机房环境内，监控网络故障、入口网络拥堵等情况都可能会导致收不到监控系统的报警，且只能监控机房内的情况，用户到机房入口的情况无法监控</li>
+</ol>
 <p>那么如何解决这两个问题呢？</p>
 <p>业务状态监控，就是要最直观的的反映业务当前是正常还是故障，该怎么监控呢？以web项目为例，首先就是要确定具体URL的返回状态，是200正常还是404未找到等，其次要考虑页面里边的内容是不是正常，我们知道最终反馈给用户内容的是由一些静态资源和后端接口数据共同组成的HTML页面，想知道内容究竟对不对这个比较困难，退而求其次我们默认所有静态资源和后端接口都返回正常状态则表示正常，这个监控就比较容易实现了。</p>
 <p>静态资源可以直接由nginx服务器处理，nginx的并发能力很强，一般不会成为性能的瓶颈，针对静态资源的监控我们可以结合ELK一起来看。后端接口的处理性能就要差很多了，对业务状态的监控也主要是对后端接口状态的监控，那我们是否需要监控所有的接口呢？这个实施起来比较麻烦，我觉得没太大必要，只需要监控几个有代表性的接口就可以了，例如<strong>我们所有的项目中都让开发单独加了一个health check的接口，这个接口的作用是连接项目所有用到的服务进行操作，如接口连接mysql进行数据查询以确定mysql能给正常提供服务，连接redis进行get、set操作以确定redis服务正常，对于这个接口的监控就能覆盖到整个链路的服务情况</strong>。</p>
@@ -282,11 +286,13 @@ define service{
 }</code></pre>
 
 
-<p>配置太多就不一一解释了，配合后边的英文注释应该看得懂，说几个重要的
-- <strong>max_check_attempts</strong>：重试几次来最终确定服务的状态，例如我们一个服务挂了，需要重试3次才会确定这个服务确实是挂了，然后发邮件或短信通知我们
-- <strong>check_interval</strong>：检查频率配置，在服务正常的情况下多长时间轮训检查一次，这里为了更及时的反馈结果我们配置一分钟一次
-- <strong>retry_interval</strong>：当服务状态发生变更的时候多长时间轮序检查一次，我们也给配置一分钟一次
-- <strong>contact_groups</strong>：定义联系人组，当发生故障需要报警时，发送报警给哪个组，这个组的配置文件在<code>/usr/local/nagios/etc/objects/contacts.cfg</code></p>
+<p>配置太多就不一一解释了，配合后边的英文注释应该看得懂，说几个重要的</p>
+<ul>
+<li><strong>max_check_attempts</strong>：重试几次来最终确定服务的状态，例如我们一个服务挂了，需要重试3次才会确定这个服务确实是挂了，然后发邮件或短信通知我们</li>
+<li><strong>check_interval</strong>：检查频率配置，在服务正常的情况下多长时间轮训检查一次，这里为了更及时的反馈结果我们配置一分钟一次</li>
+<li><strong>retry_interval</strong>：当服务状态发生变更的时候多长时间轮序检查一次，我们也给配置一分钟一次</li>
+<li><strong>contact_groups</strong>：定义联系人组，当发生故障需要报警时，发送报警给哪个组，这个组的配置文件在<code>/usr/local/nagios/etc/objects/contacts.cfg</code></li>
+</ul>
 <h5 id="contact_groupsadminscontactscfg"><strong>contact_groups</strong>我们配置了admins，接下来看下contacts.cfg的配置</h5>
 <pre class="codehilite"><code>define contact{
     contact_name                    sa       ; Short name of user
@@ -335,9 +341,11 @@ define contactgroup{
 </ol>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
-- <a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a>
-- <a href="https://ops-coffee.cn/s/fl3OiX7xg9GVrj9G--a5-g">记一次诡异的故障排查经历</a></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a></li>
+<li><a href="https://ops-coffee.cn/s/fl3OiX7xg9GVrj9G--a5-g">记一次诡异的故障排查经历</a></li>
+</ul>
       </section>
 
       <aside id="sidebar">
