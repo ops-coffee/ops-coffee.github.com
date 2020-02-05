@@ -71,9 +71,11 @@
 <p>为什么需要工单？目前的流程都是通过邮件的方式，需求邮件到DBA，DBA执行导数据的操作。自动化的流程理论来说应该从头至尾都无需人工参与，但涉及到数据安全问题，还是需要DBA确认，所以加了工单。同时工单具有状态自助追踪，减少沟通成本等优点，后续也方便统计工单量等指标，以便优化服务与流程。同时为了能够保证工单及时被处理，我们每一步都会增加邮件和IM的通知，给用户最及时的反馈。</p>
 <p>数据迁移的工单流程很简单，用户提交工单，DBA进行审核，审核通过系统自动执行迁移操作，审核不通过流程结束。流程图图如下：</p>
 <p><img alt="" src="https://blz.nosdn.127.net/sre/images/20181110.00.png" /></p>
-<p>流程中没有加入项目leader等的多层审核方式，主要是因为
-1. 尽量跟之前的邮件流程保持一致，避免给用户制造麻烦
-2. 团队规模较小，数据敏感度DBA基本可以把控，同时会在通知邮件中加上相关的同事以知晓</p>
+<p>流程中没有加入项目leader等的多层审核方式，主要是因为</p>
+<ol>
+<li>尽量跟之前的邮件流程保持一致，避免给用户制造麻烦</li>
+<li>团队规模较小，数据敏感度DBA基本可以把控，同时会在通知邮件中加上相关的同事以知晓</li>
+</ol>
 <h1 id="_2">迁移功能</h1>
 <p>数据库迁移主要是利用mysql的导入导出功能，核心的命令就一个</p>
 <pre class="codehilite"><code>mysqldump -h 10.82.9.19 -P 3306 -uops -pcoffee --default-character-set=utf8 --single-transaction --databases dbname | mysql -h 192.168.106.91 -P 3306 -uops -pcoffee --default-character-set=utf8 dbname</code></pre>
@@ -145,9 +147,11 @@ Cmd().migration()</code></pre>
 </ol>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
-- <a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">中小团队快速构建SQL自动审核系统</a>
-- <a href="https://ops-coffee.cn/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">中小团队快速构建SQL自动审核系统</a></li>
+<li><a href="https://ops-coffee.cn/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a></li>
+</ul>
       </section>
 
       <aside id="sidebar">
