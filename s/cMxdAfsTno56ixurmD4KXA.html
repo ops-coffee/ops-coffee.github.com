@@ -65,9 +65,11 @@
         <blockquote>
 <p>上一篇文章<a href="https://ops-coffee.cn/s/6ztLq8Q591KnlQY33-YFdQ">《运维效率之数据迁移自动化》</a>中讲到了工单通知，本文将介绍工单通知实现过程中的一些小技巧。所有演示均基于Django2.0</p>
 </blockquote>
-<p>阅读此篇文章你可以：
-- 解锁一个python if的使用新姿势
-- 获取一个利用signals做通知的真实案例</p>
+<p>阅读此篇文章你可以：</p>
+<ul>
+<li>解锁一个python if的使用新姿势</li>
+<li>获取一个利用signals做通知的真实案例</li>
+</ul>
 <h1 id="_1">背景说明</h1>
 <p>先看看工单表简化后的结构</p>
 <pre class="codehilite"><code>class Ticket(models.Model):
@@ -196,28 +198,50 @@
 <h1 id="signals">Signals</h1>
 <p>上边我们已经写好了发送通知的类，在view里每次修改工单状态之后调用下通知类即可实现通知发送，但这样通知跟view强耦合，且通知会分散在view中的多个地方，造成代码冗余且不够优雅。我们需要一个简单优雅的方式来实现，signals可以说是非常有用了</p>
 <p>Signals是Django自带的一个信号调度程序。如果你对svn或者git之类的hooks有了解，这个理解起来就简单多了，通俗来说就是当你的程序产生一个事件时，会通过signals自动触发其他的事件。就比如我们这个工单系统通知，当工单状态产生变化时自动发送邮件给相关人。</p>
-<p>Django内部已经定义好了一些signal供我们使用，如果不能满足我们也可以自定义signal，其中Django内部定义的signal主要分为几类
-1. model signals
-    - <code>pre_init</code>：model初始化前触发
-    - <code>post_init</code>：model初始化后触发
-    - <code>pre_save</code>：save()方法前触发
-    - <code>post_save</code>：save()方法后触发
-    - <code>pre_delete</code>：delete()方法前触发
-    - <code>post_delete</code>：delete()方法后触发
-    - <code>m2m_changed</code>：ManyToManyField字段改变时触发
-    - <code>class_prepared</code>：没用过字面意思理解吧
-2. management signals
-    - <code>pre_migrate</code>：migrate之前触发
-    - <code>post_migrate</code>：migrate之后触发
-3. request/response signals
-    - <code>request_started</code>：请求开始时触发
-    - <code>request_finished</code>：请求完成后触发
-    - <code>got_request_exception</code>：请求异常时触发
-4. test signals
-    - <code>setting_changed</code>：配置改变时触发
-    - <code>template_rendered</code>：模板渲染时触发
-5. Database Wrappers
-    - <code>connection_created</code>：连接建立时触发</p>
+<p>Django内部已经定义好了一些signal供我们使用，如果不能满足我们也可以自定义signal，其中Django内部定义的signal主要分为几类</p>
+<ol>
+<li>
+<p>model signals</p>
+<ul>
+<li><code>pre_init</code>：model初始化前触发</li>
+<li><code>post_init</code>：model初始化后触发</li>
+<li><code>pre_save</code>：save()方法前触发</li>
+<li><code>post_save</code>：save()方法后触发</li>
+<li><code>pre_delete</code>：delete()方法前触发</li>
+<li><code>post_delete</code>：delete()方法后触发</li>
+<li><code>m2m_changed</code>：ManyToManyField字段改变时触发</li>
+<li><code>class_prepared</code>：没用过字面意思理解吧</li>
+</ul>
+</li>
+<li>
+<p>management signals</p>
+<ul>
+<li><code>pre_migrate</code>：migrate之前触发</li>
+<li><code>post_migrate</code>：migrate之后触发</li>
+</ul>
+</li>
+<li>
+<p>request/response signals</p>
+<ul>
+<li><code>request_started</code>：请求开始时触发</li>
+<li><code>request_finished</code>：请求完成后触发</li>
+<li><code>got_request_exception</code>：请求异常时触发</li>
+</ul>
+</li>
+<li>
+<p>test signals</p>
+<ul>
+<li><code>setting_changed</code>：配置改变时触发</li>
+<li><code>template_rendered</code>：模板渲染时触发</li>
+</ul>
+</li>
+<li>
+<p>Database Wrappers</p>
+<ul>
+<li><code>connection_created</code>：连接建立时触发</li>
+</ul>
+</li>
+</ol>
 <p>那么信号究竟该如何使用呢？下边一个实际的例子来说明下信号的使用</p>
 <p>就以我们发送通知的需求为例，workflow是一个普通的app，第一步需要新建<code>workflow/signals.py</code>文件绑定signal</p>
 <pre class="codehilite"><code>from django.db.models import signals
