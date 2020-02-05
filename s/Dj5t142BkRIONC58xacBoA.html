@@ -76,15 +76,21 @@
 <h1 id="_2">权限设计</h1>
 <p>权限设计应先考虑我们对权限的需求，从需求出发设计权限</p>
 <ul>
-<li>需求</li>
-<li>为了方便后续管理，规定配置中心所有key都应已/conf/开头</li>
+<li>
+<p>需求</p>
+</li>
+<li>
+<p>为了方便后续管理，规定配置中心所有key都应已/conf/开头</p>
+</li>
 <li>
 <p>需要两个账号，一个账号用在Kerrigan(WebUI)拥有读取、写入、修改、删除key的权限，一个账号用在confd，只有只读的权限，能够读取配置就可以了</p>
 </li>
 <li>
 <p>设计</p>
 </li>
-<li>需求很简单，我们需要建立两个账号，分别对应两个角色，两个角色都是对/conf/开头的Key进行控制，一个读写权限，一个只读权限</li>
+<li>
+<p>需求很简单，我们需要建立两个账号，分别对应两个角色，两个角色都是对/conf/开头的Key进行控制，一个读写权限，一个只读权限</p>
+</li>
 <li>定义只读账号名为readx，只读角色名为readConf，定义读写权限账号名为authz，读写权限为rootConf，可操作的key都为/conf/开头</li>
 </ul>
 <h1 id="_3">详细步骤</h1>
@@ -187,9 +193,11 @@ Roles:  readConf</code></pre>
 <p>解决：重新添加guest角色</p>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
-- <a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a>
-- <a href="https://ops-coffee.cn/s/fl3OiX7xg9GVrj9G--a5-g">记一次诡异的故障排查经历</a></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a></li>
+<li><a href="https://ops-coffee.cn/s/fl3OiX7xg9GVrj9G--a5-g">记一次诡异的故障排查经历</a></li>
+</ul>
       </section>
 
       <aside id="sidebar">
