@@ -67,10 +67,12 @@
 <p>引入一套支持各系统、服务、主机单点认证的服务就显得尤其迫切和重要。LDAP服务正是为此而生，且经过长时间市场检验，安全稳定，文档也比较丰富，方便上手。</p>
 </blockquote>
 <h1 id="ldap">LDAP</h1>
-<p>可以通过以下三句话快速的认识一下LDAP：
-1. LDAP：Lightweight Directory Access Protocol，轻量目录访问协议。
-2. LDAP服务是一个为只读（查询、浏览、搜索）访问而优化的非关系型数据库，呈树状结构组织数据。
-3. LDAP主要用做用户信息查询（如邮箱、电话等）或对各种服务访问做后台认证以及用户数据权限管控。</p>
+<p>可以通过以下三句话快速的认识一下LDAP：</p>
+<ol>
+<li>LDAP：Lightweight Directory Access Protocol，轻量目录访问协议。</li>
+<li>LDAP服务是一个为只读（查询、浏览、搜索）访问而优化的非关系型数据库，呈树状结构组织数据。</li>
+<li>LDAP主要用做用户信息查询（如邮箱、电话等）或对各种服务访问做后台认证以及用户数据权限管控。</li>
+</ol>
 <h2 id="_1">名词解释</h2>
 <ul>
 <li>DC：domain component一般为公司名，例如：dc=163,dc=com</li>
@@ -111,13 +113,15 @@ Re-enter new password:
 config file testing succeeded</code></pre>
 
 
-<p>配置文件重要参数说明（需要自己修改的，其他未提到的可以不修改）：
-- <code>database bdb</code>：定义使用的后端数据存储格式，数据库默认采用了berkeley db，其后可以跟的值有bdb、ldbm、passwd、shell。bdb指使用Berkley DB 4数据库
-- <code>suffix "dc=163,dc=com"</code>：suffix是"LDAP基准名"，它是LDAP名字空间在这里的根。设置想要创建的子树的根DN
-- <code>rootdn "cn=admin,dc=163,dc=com"</code>：设置管理LDAP目录的超级用户的DN。这个用户名不要出现在/etc/passwd文件里
-- <code>rootpw {SSHA}TpWoSebaT5gKy2Y3EHmZh+Wc0hJaFp7y</code>：设置这个数据库的超级用户的口令验证方式。也就是上边rootdn设置的用户的密码。一定要用加密的口令存储，可以使用的加密方式有：CRYPT、MD5、SMD5、SHA和SSHA，<strong>就是我们第三步生成的密码</strong>
-- <code>directory /var/lib/ldap</code>：设置LDAP数据库和索引文件所在的目录
-- <code>access to</code>：权限配置下边详细说明</p>
+<p>配置文件重要参数说明（需要自己修改的，其他未提到的可以不修改）：</p>
+<ul>
+<li><code>database bdb</code>：定义使用的后端数据存储格式，数据库默认采用了berkeley db，其后可以跟的值有bdb、ldbm、passwd、shell。bdb指使用Berkley DB 4数据库</li>
+<li><code>suffix "dc=163,dc=com"</code>：suffix是"LDAP基准名"，它是LDAP名字空间在这里的根。设置想要创建的子树的根DN</li>
+<li><code>rootdn "cn=admin,dc=163,dc=com"</code>：设置管理LDAP目录的超级用户的DN。这个用户名不要出现在/etc/passwd文件里</li>
+<li><code>rootpw {SSHA}TpWoSebaT5gKy2Y3EHmZh+Wc0hJaFp7y</code>：设置这个数据库的超级用户的口令验证方式。也就是上边rootdn设置的用户的密码。一定要用加密的口令存储，可以使用的加密方式有：CRYPT、MD5、SMD5、SHA和SSHA，<strong>就是我们第三步生成的密码</strong></li>
+<li><code>directory /var/lib/ldap</code>：设置LDAP数据库和索引文件所在的目录</li>
+<li><code>access to</code>：权限配置下边详细说明</li>
+</ul>
 <p>5.删除原配置，生成新配置</p>
 <pre class="codehilite"><code># rm -rf /etc/ldap/slapd.d/*
 # slaptest -f /etc/ldap/slapd.conf -F /etc/ldap/slapd.d/
@@ -139,9 +143,11 @@ config file testing succeeded</code></pre>
 <p>简单解释：通过access to约束我们访问的范围（what），通过by设定哪个用户（who）有什么权限（control）</p>
 <p>ACL的详细配置还是比较复杂的，可以看下下边参考文档的第三篇，写的比较详细，这里都不再赘述。</p>
 <h3 id="acl_1">线上ACL控制配置解析</h3>
-<p>为了用户能够自主修改密码，部署了lam给用户使用（见下文lam介绍）。希望能达到的效果是：
-1. 管理员能够有全部权限，包含新建用户，修改用户属性，充值用户密码等
-2. 普通用户只能修改自己的密码，别的权限都没有</p>
+<p>为了用户能够自主修改密码，部署了lam给用户使用（见下文lam介绍）。希望能达到的效果是：</p>
+<ol>
+<li>管理员能够有全部权限，包含新建用户，修改用户属性，充值用户密码等</li>
+<li>普通用户只能修改自己的密码，别的权限都没有</li>
+</ol>
 <p>配置如下：</p>
 <pre class="codehilite"><code># access to attrs=userPassword通过属性找到访问范围密码,
 # 超级管理员也就是我们ldap配置文件里写的rootdn：&quot;cn=admin,dc=163,dc=com&quot;有写(write)权限；
@@ -170,20 +176,24 @@ access to *
 <pre class="codehilite"><code># ldapsearch -x -b &quot;dc=163,dc=com&quot; -D &quot;uid=authz,ou=Public,dc=163,dc=com&quot; -w &quot;AzdfD863M4&quot; &gt; ldap.20180626.ldif</code></pre>
 
 
-<p>参数说明：
-- <code>-x</code>：进行简单的验证
-- <code>-D</code>：用来绑定服务器的DN
-- <code>-w</code>：绑定DN的密码
-- <code>-b</code>：要查询的根节点
-authz账号要有<code>"dc=163,dc=com"</code>的查询权限</p>
+<p>参数说明：</p>
+<ul>
+<li><code>-x</code>：进行简单的验证</li>
+<li><code>-D</code>：用来绑定服务器的DN</li>
+<li><code>-w</code>：绑定DN的密码</li>
+<li><code>-b</code>：要查询的根节点</li>
+</ul>
+<p>authz账号要有<code>"dc=163,dc=com"</code>的查询权限</p>
 <h3 id="_5">还原</h3>
 <pre class="codehilite"><code># ldapadd -x -c -D &quot;cn=admin,dc=163,dc=com&quot; -w &quot;smile&quot; -f ldap.20180626.ldif</code></pre>
 
 
-<p>参数说明：
-- <code>-c</code>：出错后继续执行程序不终止，默认出错即停止
-- <code>-f</code>：从文件内读取信息还原，而不是标准输入
-还原的DN最好为管理员账号，至少也要有要LDAP的写入权限</p>
+<p>参数说明：</p>
+<ul>
+<li><code>-c</code>：出错后继续执行程序不终止，默认出错即停止</li>
+<li><code>-f</code>：从文件内读取信息还原，而不是标准输入</li>
+</ul>
+<p>还原的DN最好为管理员账号，至少也要有要LDAP的写入权限</p>
 <h1 id="web">web管理工具</h1>
 <p>用了phpldapadmin和ldap-account-management(简称lam)两款web管理工具，强烈推荐lam，所以这里就不介绍其他的了</p>
 <h2 id="ldap-account-manager">ldap-account-manager</h2>
