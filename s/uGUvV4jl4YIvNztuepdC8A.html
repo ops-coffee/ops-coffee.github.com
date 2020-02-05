@@ -192,14 +192,18 @@ check_cmd = &quot;/usr/sbin/nginx -t -c {{.src}}&quot;
 reload_cmd = &quot;/usr/sbin/service nginx reload&quot;</code></pre>
 
 
-<p>这里我们新建了一个nginx配置的资源文件，参数解释：
-- <strong>src</strong>：指定模板文件的位置，也就是nginx配置文件模板tmpl的位置
-- <strong>dest</strong>：指定最终生成或更新的配置文件绝对路径，这里为了测试我们给指定到/tmp/下
-- <strong>keys</strong>：模板文件里边要用到的key，也就是etcd里边对应的这个项目配置文件的key
-- <strong>check_cmd</strong>：在更新配置文件完成后执行的check命令，这里我们就check下nginx配置文件是否有语法错误
-- <strong>reload_cmd</strong>：在check通过后可以执行这里配置的命令，上一步的check没有问题，就会执行reload命令重新加载配置文件</p>
+<p>这里我们新建了一个nginx配置的资源文件，参数解释：</p>
 <ul>
-<li><strong>prefix</strong>：配置key的前缀，例如我们的key都是以/conf开头的，那么可以增加个配置<code>prefix="/conf"</code>，在下边keys里就可以省略掉/conf了</li>
+<li><strong>src</strong>：指定模板文件的位置，也就是nginx配置文件模板tmpl的位置</li>
+<li><strong>dest</strong>：指定最终生成或更新的配置文件绝对路径，这里为了测试我们给指定到/tmp/下</li>
+<li><strong>keys</strong>：模板文件里边要用到的key，也就是etcd里边对应的这个项目配置文件的key</li>
+<li><strong>check_cmd</strong>：在更新配置文件完成后执行的check命令，这里我们就check下nginx配置文件是否有语法错误</li>
+<li>
+<p><strong>reload_cmd</strong>：在check通过后可以执行这里配置的命令，上一步的check没有问题，就会执行reload命令重新加载配置文件</p>
+</li>
+<li>
+<p><strong>prefix</strong>：配置key的前缀，例如我们的key都是以/conf开头的，那么可以增加个配置<code>prefix="/conf"</code>，在下边keys里就可以省略掉/conf了</p>
+</li>
 <li><strong>owner</strong>：配置生成配置文件的用户</li>
 <li><strong>mode</strong>：配置生成配置文件的权限</li>
 </ul>
@@ -278,12 +282,16 @@ http {
 2018-08-23T13:46:13+08:00 onlinegame.i.nease.net confd[17084]: INFO Target config /tmp/nginx.conf has been updated</code></pre>
 
 
-<p>配置参数说明
-- <strong>-watch</strong>：开启watch模式，监听etcd配置中心文件变化，一旦有变这边立即更新，没有这个选项配置中心修改client不会更新
-- <strong>-backend</strong>：后端类型，目前支持etcd、zookeeper、consul、vault、redis、file、rancher等多种类型，confd也有一些针对不通后端类型的单独配置，具体可以通过<code>confd --help</code>命令查看
-- <strong>-node</strong>：etcd节点地址，有多个节点的话就这么写多个-node就好了，我们etcd是三个节点的集群所以这里写三次'-node'</p>
+<p>配置参数说明</p>
 <ul>
-<li><strong>-onetime</strong>：可用来替换上边的<code>-watch</code>参数，表示运行一次就退出，如果你不想让配置文件实时更新，只是想更新一次，可以用这个参数</li>
+<li><strong>-watch</strong>：开启watch模式，监听etcd配置中心文件变化，一旦有变这边立即更新，没有这个选项配置中心修改client不会更新</li>
+<li><strong>-backend</strong>：后端类型，目前支持etcd、zookeeper、consul、vault、redis、file、rancher等多种类型，confd也有一些针对不通后端类型的单独配置，具体可以通过<code>confd --help</code>命令查看</li>
+<li>
+<p><strong>-node</strong>：etcd节点地址，有多个节点的话就这么写多个-node就好了，我们etcd是三个节点的集群所以这里写三次'-node'</p>
+</li>
+<li>
+<p><strong>-onetime</strong>：可用来替换上边的<code>-watch</code>参数，表示运行一次就退出，如果你不想让配置文件实时更新，只是想更新一次，可以用这个参数</p>
+</li>
 <li><strong>-interval</strong>：可用来替换上边的<code>-watch</code>参数，表示每隔多少秒去backend取一次数据，如果想降低etcd服务器压力，又想让客户端配置文件能自动更新，可以通过这个参数来控制</li>
 </ul>
 <p>3.通过上边日志可以看到/tmp/nginx.conf文件已经正常同步且更新了，查看/tmp/nginx.conf确定内容正确</p>
@@ -309,7 +317,7 @@ http {
 <li>怎么确认Client端配置文件更新成功了？如果你是一次性启动可以在启动命令之后判断启动命令是否正常执行，如果你是watch模式或者interval，那么。。只能人肉check了吧，我也没有好方法</li>
 </ol>
 <hr />
-<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
 <p>如果你觉得文章对你有帮助，请转发分享让更多好友看到。如果你觉得读的不尽兴，推荐阅读以下文章：
 - <a href="https://ops-coffee.cn/s/GATfwNETo_aGsJHZdV5YzQ">中小团队基于Docker的devops实践</a>
 - <a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">中小团队快速构建SQL自动审核系统</a></p>
