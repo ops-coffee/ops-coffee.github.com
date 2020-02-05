@@ -279,8 +279,10 @@ _t.groupUsers.all()</code></pre>
 <pre class="codehilite"><code>abcer.models.DoesNotExist: User matching query does not exist.</code></pre>
 
 
-<p>为了程序兼容和异常判断，我们可以使用下边两种方式:
-- 方式一：<code>get</code>改为<code>filter</code></p>
+<p>为了程序兼容和异常判断，我们可以使用下边两种方式:</p>
+<ul>
+<li>方式一：<code>get</code>改为<code>filter</code></li>
+</ul>
 <pre class="codehilite"><code>_t = User.objects.filter(id=724)
 # 取出_t之后再去判断_t是否存在</code></pre>
 
@@ -336,7 +338,7 @@ return row</code></pre>
 
 <p>注意这里表名字要用<strong>app名+下划线+model名</strong>的方式</p>
 <hr />
-<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
+<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
       </section>
 
       <aside id="sidebar">
