@@ -114,9 +114,11 @@ servers:
 <h2 id="_2">报错处理</h2>
 <p>当重启完成后登陆报：<code>Could not authenticate you from Ldapmain because "Invalid credentials"</code></p>
 <p>查日志有如下报错：<code>(LDAP) Error saving user: ["Email is not whitelisted. Email domains valid for registration are: domain.com"]</code></p>
-<p>Email不在白名单？？仔细想了一下原因：
-1. GitLab之前为了安全配置了 Restricted domains for sign-ups只允许domain.com邮箱的用户注册
-2. 而我OpenLDAP在新建用户的时候邮箱没有填写为空</p>
+<p>Email不在白名单？？仔细想了一下原因：</p>
+<ol>
+<li>GitLab之前为了安全配置了 Restricted domains for sign-ups只允许domain.com邮箱的用户注册</li>
+<li>而我OpenLDAP在新建用户的时候邮箱没有填写为空</li>
+</ol>
 <p>或许就是这个问题了，登录lam将用户的邮箱字段补上（需符合白名单规则）重新登录便正常了</p>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
