@@ -88,10 +88,12 @@ _t.save()</code></pre>
 <p>方法一适合更新一批数据，类似于mysql语句<code>update user set username='nick' where id = 1</code></p>
 <p>方法二适合更新一条数据，也只能更新一条数据，当只有一条数据更新时推荐使用此方法，另外此方法还有一个好处，我们接着往下看</p>
 <h1 id="auto_now">具有auto_now属性字段的更新</h1>
-<p>我们通常会给表添加三个默认字段
-- 自增ID，这个django已经默认加了，就像上边的建表语句，虽然只写了username和is_active两个字段，但表建好后也会有一个默认的自增id字段
-- 创建时间，用来标识这条记录的创建时间，具有<code>auto_now_add</code>属性，创建记录时会自动填充当前时间到此字段
-- 修改时间，用来标识这条记录最后一次的修改时间，具有<code>auto_now</code>属性，当记录发生变化时填充当前时间到此字段</p>
+<p>我们通常会给表添加三个默认字段</p>
+<ul>
+<li>自增ID，这个django已经默认加了，就像上边的建表语句，虽然只写了username和is_active两个字段，但表建好后也会有一个默认的自增id字段</li>
+<li>创建时间，用来标识这条记录的创建时间，具有<code>auto_now_add</code>属性，创建记录时会自动填充当前时间到此字段</li>
+<li>修改时间，用来标识这条记录最后一次的修改时间，具有<code>auto_now</code>属性，当记录发生变化时填充当前时间到此字段</li>
+</ul>
 <p>就像下边这样的表结构</p>
 <pre class="codehilite"><code>class User(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -207,17 +209,23 @@ _t.save()</code></pre>
 
 
 <ul>
-<li><code>add()</code>：m2m字段添加一个值，当有多个值的时候可用列表，参照上边例子<ul>
+<li>
+<p><code>add()</code>：m2m字段添加一个值，当有多个值的时候可用列表，参照上边例子</p>
+<ul>
 <li>_t.groups.add(2)</li>
 <li>_t.groups.add(Group.objects.get(id=2))</li>
 </ul>
 </li>
-<li><code>remove()</code>：m2m字段移除一个值，，当有多个值的时候可用列表，参照上边例子<ul>
+<li>
+<p><code>remove()</code>：m2m字段移除一个值，，当有多个值的时候可用列表，参照上边例子</p>
+<ul>
 <li>_t.groups.remove(2)</li>
 <li>_t.groups.remove(Group.objects.get(id=2))</li>
 </ul>
 </li>
-<li><code>clear()</code>：清空m2m字段的值</li>
+<li>
+<p><code>clear()</code>：清空m2m字段的值</p>
+</li>
 </ul>
 <p><img alt="扫码关注公众号查看更多实用文章" src="http://blz.nos-hz.163yun.com/sre/wx.qrcode.jpg" /></p>
       </section>
