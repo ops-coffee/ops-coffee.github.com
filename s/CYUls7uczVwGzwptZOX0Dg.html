@@ -69,8 +69,8 @@
 <p>Rsyslog是高速的日志收集处理服务，它具有高性能、安全可靠和模块化设计的特点，能够接收来自各种来源的日志输入（例如：file，tcp，udp，uxsock等），并通过处理后将结果输出的不同的目的地（例如：mysql，mongodb，elasticsearch，kafka等），每秒处理日志量能够超过百万条。</p>
 <p>Rsyslog作为syslog的增强升级版本已经在各linux发行版<strong>默认安装</strong>了，无需额外安装。</p>
 <h1 id="nginx">收集Nginx日志</h1>
-<p>ELK通过Rsyslog收集日志流程图如下：
-<img alt="" src="https://blz.nosdn.127.net/sre/images/20180828.00.jpg" /></p>
+<p>ELK通过Rsyslog收集日志流程图如下：</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20180828.00.jpg" /></p>
 <ol>
 <li>处理流程为：Nginx --syslog--&gt; Rsyslog --omkafka--&gt; Kafka --&gt; Logstash --&gt; Elasticsearch --&gt; Kibana</li>
 <li>Nginx产生日志通过syslog系统服务传给Rsyslog服务端，Rsyslog接收到日志后通过omkafka模块将日志写入Kafka，Logstash读取Kafka队列然后写入Elasticsearch，用户通过Kibana检索Elasticsearch里存储的日志</li>
@@ -140,12 +140,14 @@ access_log syslog:server=rsyslog.domain.com,facility=local7,tag=nginx_access_log
 <p>1.Nginx在<strong>v1.10之后</strong>的版本才支持syslog的方式处理日志，请确保你的Nginx版本高于1.10</p>
 <p>2.为了降低logstash的处理压力，同时也为了降低整个配置的复杂度，我们nginx的日志直接采用json格式</p>
 <p>3.抛弃文本文件记录nginx日志，改用syslog直接将日志传输到远端的rsyslog服务器，以便我们后续的处理；这样做的另一个非常重要的好处是我们再也无需考虑nginx日志的分割和定期删除问题（一般我们为了方便管理通常会采用logrotate服务来对日志进行按天拆分和定期删除,以免磁盘被占满）</p>
-<p>4.access_log直接输出到syslog服务，各参数解释如下：
-- <strong>syslog</strong>：指明日志用syslog服务接收
-- <strong>server</strong>：接收syslog发送日志的Rsyslog服务端地址，默认使用udp协议，端口是514
-- <strong>facility</strong>：指定记录日志消息的类型，例如认证类型auth、计划任务cron、程序自定义的local0-7等，没有什么特别的含义，不必深究，默认的值是local7
-- <strong>tag</strong>：给日志添加一个tag，主要是为了方便我们在服务端区分是哪个服务或者client传来的日志，例如我们这里给了tag：<code>nginx_access_log</code>，如果有多个服务同时都写日志给rsyslog，且配置了不通的tag，在rsyslog服务端就可以根据这个tag找出哪些是nginx的日志
-- <strong>severity</strong>：定义日志的级别，例如debug，info，notice等，默认是error</p>
+<p>4.access_log直接输出到syslog服务，各参数解释如下：</p>
+<ul>
+<li><strong>syslog</strong>：指明日志用syslog服务接收</li>
+<li><strong>server</strong>：接收syslog发送日志的Rsyslog服务端地址，默认使用udp协议，端口是514</li>
+<li><strong>facility</strong>：指定记录日志消息的类型，例如认证类型auth、计划任务cron、程序自定义的local0-7等，没有什么特别的含义，不必深究，默认的值是local7</li>
+<li><strong>tag</strong>：给日志添加一个tag，主要是为了方便我们在服务端区分是哪个服务或者client传来的日志，例如我们这里给了tag：<code>nginx_access_log</code>，如果有多个服务同时都写日志给rsyslog，且配置了不通的tag，在rsyslog服务端就可以根据这个tag找出哪些是nginx的日志</li>
+<li><strong>severity</strong>：定义日志的级别，例如debug，info，notice等，默认是error</li>
+</ul>
 <h5 id="serverrsyslog">Server端Rsyslog配置</h5>
 <pre class="codehilite"><code># cat /etc/rsyslog.d/rsyslog_nginx_kafka_cluster.conf 
 module(load=&quot;imudp&quot;)
@@ -173,12 +175,14 @@ if $inputname == &quot;imudp&quot; then {
 
 
 <p>1.在rsyslog.d目录下添加一个专门处理nginx日志的配置文件</p>
-<p>2.rsyslog配置文件重要配置解释如下：
-- <strong>module</strong>：加载模块，这里我们需要加载imudp模块来接收nginx服务器syslog发过来的日志数据，也需要加载omkafka模块来将日志写入到kafka
-- <strong>input</strong>：开启udp协议，端口514，也可以同时开启tcp协议，两者可以共存
-- <strong>template</strong>：定义一个模板，名字叫nginxLog，模板里可以定义日志的格式，因为我们传的已经是json了，不需要再匹配格式，所以这里不额外定义，注意模板名字要唯一
-- <strong>action</strong>：在匹配到inputname为<code>imudp</code>且programname为<code>nginx_access_log</code>（就是我们上边nginx配置里边的tag）之后的处理方式，这里的配置为匹配到的日志通过omkafka模块写入kafka集群，还有一些关于omkafka更详细的配置参考上边给出的omkafka模块官方文档
-- <strong>:rawmsg, contains</strong>：最后这一行的意思是忽略包含<code>nginx_access_log</code>的日志，没有这一行的话rsyslog服务默认会把所有日志都记录到message里边一份，我们已经把日志输出到kafka了，本地就没必要再记录了</p>
+<p>2.rsyslog配置文件重要配置解释如下：</p>
+<ul>
+<li><strong>module</strong>：加载模块，这里我们需要加载imudp模块来接收nginx服务器syslog发过来的日志数据，也需要加载omkafka模块来将日志写入到kafka</li>
+<li><strong>input</strong>：开启udp协议，端口514，也可以同时开启tcp协议，两者可以共存</li>
+<li><strong>template</strong>：定义一个模板，名字叫nginxLog，模板里可以定义日志的格式，因为我们传的已经是json了，不需要再匹配格式，所以这里不额外定义，注意模板名字要唯一</li>
+<li><strong>action</strong>：在匹配到inputname为<code>imudp</code>且programname为<code>nginx_access_log</code>（就是我们上边nginx配置里边的tag）之后的处理方式，这里的配置为匹配到的日志通过omkafka模块写入kafka集群，还有一些关于omkafka更详细的配置参考上边给出的omkafka模块官方文档</li>
+<li><strong>:rawmsg, contains</strong>：最后这一行的意思是忽略包含<code>nginx_access_log</code>的日志，没有这一行的话rsyslog服务默认会把所有日志都记录到message里边一份，我们已经把日志输出到kafka了，本地就没必要再记录了</li>
+</ul>
 <p>3.omkafka模块检查kafka里边topic是否存在，如果不存在则创建，无需手动创建kafka的topic</p>
 <h5 id="serverlogstash">Server端logstash配置</h5>
 <pre class="codehilite"><code>input {
@@ -212,10 +216,12 @@ output {
 }</code></pre>
 
 
-<p>重要配置参数解释如下：
-- <strong>input</strong>：配置kafka的集群地址和topic名字
-- <strong>filter</strong>：一些过滤策略，因为传入kafka的时候是json格式，所以不需要额外处理，唯一需要注意的是如果日志中有中文，例如url中有中文内容时需要替换<code>\\x</code>，不然json格式会报错
-- <strong>output</strong>：配置ES服务器集群的地址和index，index自动按天分割</p>
+<p>重要配置参数解释如下：</p>
+<ul>
+<li><strong>input</strong>：配置kafka的集群地址和topic名字</li>
+<li><strong>filter</strong>：一些过滤策略，因为传入kafka的时候是json格式，所以不需要额外处理，唯一需要注意的是如果日志中有中文，例如url中有中文内容时需要替换<code>\\x</code>，不然json格式会报错</li>
+<li><strong>output</strong>：配置ES服务器集群的地址和index，index自动按天分割</li>
+</ul>
 <h5 id="_1">联调测试</h5>
 <p>配置完成后分别重启rsyslog服务和nginx服务，访问nginx产生日志</p>
 <p>1.查看kafka是否有正常生成topic</p>
