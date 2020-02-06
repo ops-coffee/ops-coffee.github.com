@@ -74,9 +74,11 @@
 <p>信息加密常见的有两类：</p>
 <p>第一类无需解密：例如系统登录密码加密，通过加密算法对用户输入密码进行加密后存放在数据库中，用户再次登录时依然拿相同的加密算法对用户输入密码进行加密，拿加密后的结果和数据库中存放的结果做对比，整个过程中都不需要知道用户输入的原始密码是什么，MD5是处理此类加密最常用的加密算法</p>
 <p>第二类需要解密：例如我们写在项目代码中连接数据库的账号密码，项目代码中以密文方式存储，当需要连接数据库的时候，要对密文进行解密，拿到原始未加密的账号密码去连接数据库，与MD5单向加密不同，这类加密需要能对加密后的密文进行解密，此类加密方法目前最常用的加密算法为RSA</p>
-<p>我们这里考虑的是给配置文件里的敏感信息加密，也就是上边说的第二类情况，采用的也是RSA加密算法，关于RSA加密算法的详细内容自行Google下吧，这里不赘述，需要知道以下两点就可以了：
-1. 加密算法需要生成一对RSA秘钥，分别为公钥和私钥
-2. 拿公钥对密码进行加密得到加密后的字符串配置在项目代码中，需要使用原始密码的时候拿私钥对加密后的字符串进行解密得到原始密码</p>
+<p>我们这里考虑的是给配置文件里的敏感信息加密，也就是上边说的第二类情况，采用的也是RSA加密算法，关于RSA加密算法的详细内容自行Google下吧，这里不赘述，需要知道以下两点就可以了：</p>
+<ol>
+<li>加密算法需要生成一对RSA秘钥，分别为公钥和私钥</li>
+<li>拿公钥对密码进行加密得到加密后的字符串配置在项目代码中，需要使用原始密码的时候拿私钥对加密后的字符串进行解密得到原始密码</li>
+</ol>
 <p>这里注意一个问题，拿到私钥就可以对加密字符串进行解密，那么这个秘钥肯定就不能放在项目代码中了，不然再遇到代码给传Github的情况就可以拿秘钥进行解密，失去了加密的意义了。这里我们的策略是秘钥统一由运维管理，直接放在生产服务器中，项目代理里配置路径可读取秘钥即可，避免秘钥因代码泄露而泄露。</p>
 <p>RSA加解密python脚本，可以直接使用此脚本生成RSA秘钥对，加密密码或者解密，当然也可以使用OpenSSL工具完成此操作</p>
 <pre class="codehilite"><code>import binascii
@@ -153,9 +155,11 @@ if __name__ == '__main__':
 </ol>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
-- <a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a>
-- <a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">中小团队快速构建SQL自动审核系统</a></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/uGUvV4jl4YIvNztuepdC8A">中小团队落地配置中心详解</a></li>
+<li><a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">中小团队快速构建SQL自动审核系统</a></li>
+</ul>
       </section>
 
       <aside id="sidebar">
@@ -168,12 +172,12 @@ if __name__ == '__main__':
 <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
 
 <blockquote class="route">归档列表</blockquote>
-<div class="sidebar-list"><a href="/s" target="_blank"> 精选文章列表</a></div>
-<div class="sidebar-list"><a href="/t/" target="_blank"> 日常运维记录</a></div>
-<div class="sidebar-list"><a href="/devops" target="_blank"> 运维系统平台</a></div>
-<div class="sidebar-list"><a href="/webssh" target="_blank"> WebSSH系列</a></div>
-<div class="sidebar-list"><a href="/x" target="_blank"> 脑洞大开系列</a></div>
-<div class="sidebar-list"><a href="/w" target="_blank"> 新型冠状病毒</a></div>
+<a class="button" href="/s" target="_blank"> 精选文章列表</a>
+<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
+<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
+<a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
 <blockquote class="route">锟斤拷锟斤</blockquote>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

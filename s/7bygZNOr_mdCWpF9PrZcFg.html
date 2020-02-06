@@ -67,14 +67,18 @@
 </blockquote>
 <h1 id="_1">日志规范</h1>
 <p>规范的日志存放路径和输出格式将为我们后续的收集和分析带来极大的方便，无需考虑各种不同路径、格式的兼容问题，只需要针对固定几类日志做适配就可以了，具体的规范如下：</p>
-<p><strong>日志存放路径规范</strong>
-1. 项目日志只能输出到固定的位置，例如<code>/data/logs/</code>目录下
-2. 同一类型（例如java web）的日志文件名保持统一，例如都叫<code>application.log</code>
-3. 一个类型的项目可以记录多个不同的日志文件，例如<code>exception.log</code>和<code>business.log</code></p>
-<p><strong>日志输出格式规范</strong>
-1. 日志输出必须为JSON格式，这个很重要
-2. 同一类型的项目应采用统一的日志输出标准，尽量将日志输出模块化，所有项目引用同一模块
-3. 输出日志中必须包含标准时间（timestamp）、应用名称（appname）、级别（level）字段，日志内容记录清晰易懂</p>
+<p><strong>日志存放路径规范</strong></p>
+<ol>
+<li>项目日志只能输出到固定的位置，例如<code>/data/logs/</code>目录下</li>
+<li>同一类型（例如java web）的日志文件名保持统一，例如都叫<code>application.log</code></li>
+<li>一个类型的项目可以记录多个不同的日志文件，例如<code>exception.log</code>和<code>business.log</code></li>
+</ol>
+<p><strong>日志输出格式规范</strong></p>
+<ol>
+<li>日志输出必须为JSON格式，这个很重要</li>
+<li>同一类型的项目应采用统一的日志输出标准，尽量将日志输出模块化，所有项目引用同一模块</li>
+<li>输出日志中必须包含标准时间（timestamp）、应用名称（appname）、级别（level）字段，日志内容记录清晰易懂</li>
+</ol>
 <p><strong>日志信息级别规范</strong></p>
 <table>
 <thead>
@@ -203,9 +207,11 @@ output {
 </ol>
 <hr />
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：
-- <a href="https://ops-coffee.cn/s/umH7ImZZVhdfgMdZ3Hz5fA">ELK构建MySQL慢日志收集平台详解</a>
-- <a href="https://ops-coffee.cn/s/CYUls7uczVwGzwptZOX0Dg">ELK日志系统之使用Rsyslog快速方便的收集Nginx日志</a></p>
+<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
+<ul>
+<li><a href="https://ops-coffee.cn/s/umH7ImZZVhdfgMdZ3Hz5fA">ELK构建MySQL慢日志收集平台详解</a></li>
+<li><a href="https://ops-coffee.cn/s/CYUls7uczVwGzwptZOX0Dg">ELK日志系统之使用Rsyslog快速方便的收集Nginx日志</a></li>
+</ul>
       </section>
 
       <aside id="sidebar">
@@ -218,12 +224,12 @@ output {
 <p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
 
 <blockquote class="route">归档列表</blockquote>
-<div class="sidebar-list"><a href="/s" target="_blank"> 精选文章列表</a></div>
-<div class="sidebar-list"><a href="/t/" target="_blank"> 日常运维记录</a></div>
-<div class="sidebar-list"><a href="/devops" target="_blank"> 运维系统平台</a></div>
-<div class="sidebar-list"><a href="/webssh" target="_blank"> WebSSH系列</a></div>
-<div class="sidebar-list"><a href="/x" target="_blank"> 脑洞大开系列</a></div>
-<div class="sidebar-list"><a href="/w" target="_blank"> 新型冠状病毒</a></div>
+<a class="button" href="/s" target="_blank"> 精选文章列表</a>
+<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
+<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
+<a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
 <blockquote class="route">锟斤拷锟斤</blockquote>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
