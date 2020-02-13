@@ -7,9 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
   <meta name="applicable-device" content="pc,mobile">
-  <meta name="keywords" content="提问的智慧,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="keywords" content="提问的智慧,运维咖啡吧" />
   <meta name="description" content="本文教你如何正确的提出技术问题并获得你满意的答案" />
-  <link rel="stylesheet" href="/css/style.min.css" media="screen" type="text/css" />
+  <link rel="stylesheet" href="/css/istyle.min.css" media="screen" type="text/css" />
   <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
 
   <!-- Begin SEO tag -->
@@ -36,31 +36,23 @@
   <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
-<body>
+<body data-rsssl=1>
   <header class="header">
-    <div class="inner">
-      <a href="https://ops-coffee.cn/">
-        <h1>运维咖啡吧</h1>
-      </a>
-      <h2>追求技术的道路上，我从不曾停下脚步</h2>
-    </div>
-
-	  <div class="mobile">
+    <div class="container">
       <a class="site" href="/">运维咖啡吧</a>
       <nav class="header-menu">
         <ul>
-          <li class=""><a href="javascript:void(0);" id="showMenu">MENU</a></li>
+          <li class=""><a href="/s">精选</a></li>
+          <li class=""><a href="/search.html">搜索</a></li>
         </ul>
       </nav>
     </div>
   </header>
+  <!-- header -->
 
-  <div id="content-wrapper">
-    <div class="inner clearfix">
-      <section id="main-content">
-        
-
-        <h1 id="_1">提问的智慧</h1>
+  <div class="warp">
+    <div class="container">
+      <h1 id="_1">提问的智慧</h1>
 <p><strong>How To Ask Questions The Smart Way</strong></p>
 <p>Copyright © 2001,2006,2014 Eric S. Raymond, Rick Moen</p>
 <p>本指南英文版版权为 Eric S. Raymond, Rick Moen 所有。</p>
@@ -511,37 +503,28 @@ I'll be glad to translate responses, if you only use one or the other.</p>
 <h2 id="_35">相关资源</h2>
 <p>如果你需要个人电脑、Unix 系统和网络如何运作的基础知识，参阅 <a href="http://en.tldp.org/HOWTO/Unix-and-Internet-Fundamentals-HOWTO/">Unix 系统和网络基本原理</a>。</p>
 <p>当你发布软件或补丁时，试着按<a href="http://en.tldp.org/HOWTO/Software-Release-Practice-HOWTO/index.html">软件发布实践</a>操作。</p>
-      </section>
-
-      <aside id="sidebar">
-        None
-      </aside>
     </div>
   </div>
 
+  <!-- footer -->
   <footer class="footer">
-    <div class="inner">
+    <div class="container">
       <div class="copy"> © 2019 ops-coffee</div>
 
       <div class="link">
-        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
-        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+        <a href="/" target="_blank">关于本站</a>
+        <a href="/" target="_blank">回到首页</a>
       </div>
     </div>
   </footer>
+
+  <script src="https://blz.nosdn.127.net/sre/posts/js/L2Dwidget.min.js"></script>
+  <script type="text/javascript">
+    L2Dwidget.init({
+      model: { jsonPath: '/live2d/tororo/assets/tororo.model.json' }, mobile: { show: false },
+      react: { opacityDefault: 0.85, opacityOnHover: 0.2 }, display: { width: 150, height: 200 }
+    })
+  </script>
 </body>
 
-<script>
-  document.getElementById("showMenu").onclick=function(){
-      if (document.getElementById("showMenu").innerText == 'MENU') {
-      document.getElementById("showMenu").innerText = 'BACK';
-      document.getElementById('sidebar').style.display="block";
-      document.getElementById('main-content').style.display="none";
-    } else {
-      document.getElementById("showMenu").innerText = 'MENU';
-      document.getElementById('sidebar').style.display="none";
-      document.getElementById('main-content').style.display="block";
-    }
-  }
-</script>
 </html>
