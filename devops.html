@@ -7,9 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
   <meta name="applicable-device" content="pc,mobile">
-  <meta name="keywords" content="devops,kubernetes,docker,cmdb,cicd,jenkins,python,django,开源,自动化" />
-  <meta name="description" content="追求技术的道路上，我从不曾停下脚步" />
-  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/istyle.min.css" media="screen" type="text/css" />
+  <meta name="keywords" content="devops,kubernetes,docker,cmdb,cicd,jenkins,python,django,开源,自动化,运维咖啡吧" />
+  <meta name="description" content="自主研发以及优秀开源的Devops运维自动化系统汇总分享，助力SRE轻松运维大规模服务器集群" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/istyle.min.css" type="text/css" />
   <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
 
   <!-- Begin SEO tag -->
@@ -18,26 +18,9 @@
   <meta property="og:site_name" content="运维咖啡吧" />
   <meta property="og:url" content="https://ops-coffee.cn/" />
   <meta property="og:title" content="DevOps运维自动化工具系统平台" />
-  <meta property="og:description" content="追求技术的道路上，我从不曾停下脚步" />
+  <meta property="og:description" content="自主研发以及优秀开源的Devops运维自动化系统汇总分享，助力SRE轻松运维大规模服务器集群" />
   <link rel="canonical" href="https://ops-coffee.cn/" />
   <!-- End SEO tag -->
-
-  <style type="text/css">
-    .aspect-ratio {
-      position: relative;
-      width: 100%;
-      height: 0;
-      padding-bottom: 75%;
-    }
-    
-    .aspect-ratio iframe {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
-    }
-  </style>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
@@ -48,6 +31,9 @@
 
     gtag('config', 'UA-145167079-1');
   </script>
+
+  <!-- Google Adsense -->
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
 <body data-rsssl=1>
@@ -56,8 +42,8 @@
       <a class="site" href="/">运维咖啡吧</a>
       <nav class="header-menu">
         <ul>
-          <li class=""><a href="/s">精选</a></li>
-          <li class=""><a href="/webssh">WebSSH</a></li>
+          <li class=""><a href="/s/index.html">精选</a></li>
+          <li class=""><a href="/questions.html">提问</a></li>
         </ul>
       </nav>
     </div>
@@ -68,110 +54,95 @@
     <div class="container">
       <p style="text-align:center"><img alt="" src="https://blz.nosdn.127.net/sre/images/20200107.devops.png"></p>
 
-      <h1 style="position: absolute;top: -9999px;left: -9999px;">堡垒机WebSSH全功能实现教程</h1>
+<h1 style="position: absolute;top: -9999px;left: -9999px;">堡垒机WebSSH全功能实现教程</h1>
 
-      <div class="nav-cell">
-        <hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
+<div class="nav-cell">
+	<hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
 
-        <ul class="nav-list-art">
+	<ul class="nav-list-art">
+	  <li>
+		<a class="nav-item" href="/s/HwOi-ARTvvNjGTWrDmZIkQ.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">我们自研的那些Devops工具</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/HwOi-ARTvvNjGTWrDmZIkQ.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">我们自研的那些Devops工具</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/GATfwNETo_aGsJHZdV5YzQ.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">中小团队基于Docker的devops实践</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/GATfwNETo_aGsJHZdV5YzQ.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">中小团队基于Docker的devops实践</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/Nxh7mwPJPlbL3R9MdlkO_A.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Alodi：为了保密我开发了一个系统</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/Nxh7mwPJPlbL3R9MdlkO_A.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Alodi：为了保密我开发了一个系统</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/h9k_C7kNB6q1VqxQDVHyiQ.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Alodi：环境创建从未如此简单</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/h9k_C7kNB6q1VqxQDVHyiQ.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Alodi：环境创建从未如此简单</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/uGUvV4jl4YIvNztuepdC8A.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">中小团队落地配置中心详解</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/uGUvV4jl4YIvNztuepdC8A.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">中小团队落地配置中心详解</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/QG42UqJ9rnswQDMd41CYUg.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Kerrigan：配置中心管理UI的实现思路和技术细节</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/QG42UqJ9rnswQDMd41CYUg.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Kerrigan：配置中心管理UI的实现思路和技术细节</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/eM7SNKmtw2tDQtXBsBXyxQ.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">探秘varian：优雅的发布部署程序</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/eM7SNKmtw2tDQtXBsBXyxQ.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">探秘varian：优雅的发布部署程序</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/ZrrLUNRlAXVfVKvA1m0nsg.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">中小团队快速构建SQL自动审核系统</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/ZrrLUNRlAXVfVKvA1m0nsg.html" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">中小团队快速构建SQL自动审核系统</div>
-              <p></p>
-            </a>
-          </li>
+	  <hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
 
-          <hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
+	  <li>
+		<a class="nav-item" href="/s/eZX5qoJzuCSuLI98gSCtpw.html" target="_blank">
+		  <div class="nav-img" style="background-image: url(http://www.opendevops.cn/images/head_logo.png);"></div>
+		  <div class="nav-name">开源推荐 | CoDo开源一站式DevOps平台</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/eZX5qoJzuCSuLI98gSCtpw.html" target="_blank">
-              <div class="nav-img" style="background-image: url(http://www.opendevops.cn/images/head_logo.png);"></div>
-              <div class="nav-name">开源推荐 | CoDo开源一站式DevOps平台</div>
-              <p></p>
-            </a>
-          </li>
-
-          <li>
-            <a class="nav-item" href="http://www.opendevops.cn/" target="_blank">
-              <div class="nav-img" style="background-image: url(http://www.opendevops.cn/images/head_logo.png);"></div>
-              <div class="nav-name">CODO | 开源的一站式运维平台官方网站</div>
-              <p></p>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <div>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- footer -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-8944257246828217"
-             data-ad-slot="6731434232"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
+	  <li>
+		<a class="nav-item" href="http://www.opendevops.cn/" target="_blank">
+		  <div class="nav-img" style="background-image: url(http://www.opendevops.cn/images/head_logo.png);"></div>
+		  <div class="nav-name">CODO | 开源的一站式运维平台官方网站</div>
+		  <p></p>
+		</a>
+	  </li>
+	</ul>
+</div>
     </div>
   </div>
 
