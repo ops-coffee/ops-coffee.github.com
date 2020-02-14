@@ -7,9 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
   <meta name="applicable-device" content="pc,mobile">
-  <meta name="keywords" content="堡垒机,webssh,python,django,channels,lrzsz,xterm,zmodem,resize,docker" />
-  <meta name="description" content="追求技术的道路上，我从不曾停下脚步" />
-  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/istyle.min.css" media="screen" type="text/css" />
+  <meta name="keywords" content="堡垒机,webssh,python,django,channels,lrzsz,xterm,zmodem,resize,docker,运维咖啡吧" />
+  <meta name="description" content="Pyton Django实现功能完善的堡垒机WebSSH系列教程，包含交互命令执行、操作录像回放、监控、踢下线、zomdem协议实现的lrzsz文件上传下载等功能" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/istyle.min.css" type="text/css" />
   <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
 
   <!-- Begin SEO tag -->
@@ -18,11 +18,41 @@
   <meta property="og:site_name" content="运维咖啡吧" />
   <meta property="og:url" content="https://ops-coffee.cn/" />
   <meta property="og:title" content="堡垒机WebSSH全功能实现教程" />
-  <meta property="og:description" content="追求技术的道路上，我从不曾停下脚步" />
+  <meta property="og:description" content="Pyton Django实现功能完善的堡垒机WebSSH系列教程，包含交互命令执行、操作录像回放、监控、踢下线、zomdem协议实现的lrzsz文件上传下载等功能" />
   <link rel="canonical" href="https://ops-coffee.cn/" />
   <!-- End SEO tag -->
 
-  <style type="text/css">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+
+  <!-- Google Adsense -->
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body data-rsssl=1>
+  <header class="header">
+    <div class="container">
+      <a class="site" href="/">运维咖啡吧</a>
+      <nav class="header-menu">
+        <ul>
+          <li class=""><a href="/s/index.html">精选</a></li>
+          <li class=""><a href="/questions.html">提问</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- header -->
+
+  <div class="warp">
+    <div class="container">
+      <style type="text/css">
     .aspect-ratio {
       position: relative;
       width: 100%;
@@ -37,110 +67,83 @@
       left: 0;
       top: 0;
     }
-  </style>
+</style>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+<div class="aspect-ratio">
+	<iframe src="//player.bilibili.com/player.html?aid=78686836&cid=134635458&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+</div>
 
-    gtag('config', 'UA-145167079-1');
-  </script>
-</head>
+<h1 style="position: absolute;top: -9999px;left: -9999px;">堡垒机WebSSH全功能实现教程</h1>
 
-<body data-rsssl=1>
-  <header class="header">
-    <div class="container">
-      <a class="site" href="/">运维咖啡吧</a>
-      <nav class="header-menu">
-        <ul>
-          <li class=""><a href="/s">精选</a></li>
-          <li class=""><a href="/devops">DevOps</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-  <!-- header -->
+<div class="nav-cell">
+	<hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
 
-  <div class="warp">
-    <div class="container">
-      <div class="aspect-ratio">
-        <iframe src="//player.bilibili.com/player.html?aid=78686836&cid=134635458&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-      </div>
+	<ul class="nav-list-art">
 
-      <h1 style="position: absolute;top: -9999px;left: -9999px;">堡垒机WebSSH全功能实现教程</h1>
+	  <li>
+		<a class="nav-item" href="/s/FHDyvHsh-oO1cn7AXk_4WA" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Django实现WebSSH操作Kubernetes Pod</div>
+		  <p></p>
+		</a>
+	  </li>
 
-      <div class="nav-cell">
-        <hr style="margin: 20px 0;height: 12px;border: 0;box-shadow: inset 0 12px 12px -12px rgba(0,0,0,0.5);" />
+	  <li>
+		<a class="nav-item" href="/s/4jE9hivFG4GmbIA4kKq7Wg" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Kubernetes WebSSH终端窗口自适应Resize</div>
+		  <p></p>
+		</a>
+	  </li>
 
-        <ul class="nav-list-art">
+	  <li>
+		<a class="nav-item" href="/s/a3eJjVTtuUjzwyk21nTBqQ" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">Django实现WebSSH操作物理机或虚拟机</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/FHDyvHsh-oO1cn7AXk_4WA" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Django实现WebSSH操作Kubernetes Pod</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/XBKEfJKaucTFFcj-cS95LQ" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">堡垒机的核心武器：WebSSH录像实现</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/4jE9hivFG4GmbIA4kKq7Wg" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Kubernetes WebSSH终端窗口自适应Resize</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/GXhkc8rBHhjjf_wHxd7j3w" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">堡垒机WebSSH进阶之实时监控和强制下线</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/a3eJjVTtuUjzwyk21nTBqQ" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">Django实现WebSSH操作物理机或虚拟机</div>
-              <p></p>
-            </a>
-          </li>
+	  <li>
+		<a class="nav-item" href="/s/poC2i859LQwIY1USq2Rfjw" target="_blank">
+		  <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
+		  <div class="nav-name">WebSSH画龙点睛之lrzsz上传下载文件</div>
+		  <p></p>
+		</a>
+	  </li>
 
-          <li>
-            <a class="nav-item" href="/s/XBKEfJKaucTFFcj-cS95LQ" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">堡垒机的核心武器：WebSSH录像实现</div>
-              <p></p>
-            </a>
-          </li>
+	</ul>
+</div>
 
-          <li>
-            <a class="nav-item" href="/s/GXhkc8rBHhjjf_wHxd7j3w" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">堡垒机WebSSH进阶之实时监控和强制下线</div>
-              <p></p>
-            </a>
-          </li>
-
-          <li>
-            <a class="nav-item" href="/s/poC2i859LQwIY1USq2Rfjw" target="_blank">
-              <div class="nav-img" style="background-image: url(https://blz.nosdn.127.net/sre/images/icon-list.png);"></div>
-              <div class="nav-name">WebSSH画龙点睛之lrzsz上传下载文件</div>
-              <p></p>
-            </a>
-          </li>
-
-        </ul>
-      </div>
-
-      <div>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- footer -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-8944257246828217"
-             data-ad-slot="6731434232"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
+<div>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- footer -->
+	<ins class="adsbygoogle"
+		 style="display:block"
+		 data-ad-client="ca-pub-8944257246828217"
+		 data-ad-slot="6731434232"
+		 data-ad-format="auto"
+		 data-full-width-responsive="true"></ins>
+	<script>
+		 (adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
     </div>
   </div>
 
