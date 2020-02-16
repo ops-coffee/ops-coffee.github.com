@@ -9,7 +9,7 @@
   <meta name="applicable-device" content="pc,mobile">
   <meta name="keywords" content="None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
   <meta name="description" content="我被张文宏医生圈粉了" />
-  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/style.min.css" type="text/css" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/ops-coffee.min.css" type="text/css" />
   <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
 
   <!-- Begin SEO tag -->
@@ -37,26 +37,22 @@
 </head>
 
 <body>
-  <header class="header">
-    <div class="inner">
+  <header>
+    <div class="container">
       <a href="https://ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
     </div>
 
-	  <div class="mobile">
-      <a class="site" href="/">运维咖啡吧</a>
-      <nav class="header-menu">
-        <ul>
-          <li class=""><a href="javascript:void(0);" id="showMenu">MENU</a></li>
-        </ul>
-      </nav>
+    <div class="mobile">
+      <a id="mobile-nav-site" href="/">运维咖啡吧</a>
+      <a id="mobile-nav-menu" href="javascript:void(0);" >MENU</a>
     </div>
   </header>
 
-  <div id="content-wrapper">
-    <div class="inner clearfix">
+  <div id="content-wrap">
+    <div class="container clearfix">
       <section id="main-content">
         
         <h1 id="art-title">我被张文宏医生圈粉了</h1>
@@ -124,8 +120,8 @@
   </div>
 
   <footer class="footer">
-    <div class="inner">
-      <div class="copy"> © 2019 ops-coffee</div>
+    <div class="container clearfix">
+      <div class="copy"> © 2020 ops-coffee</div>
 
       <div class="link">
         <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
@@ -136,15 +132,15 @@
 </body>
 
 <script>
-  document.getElementById("showMenu").onclick=function(){
-      if (document.getElementById("showMenu").innerText == 'MENU') {
-      document.getElementById("showMenu").innerText = 'BACK';
-      document.getElementById('sidebar').style.display="block";
-      document.getElementById('main-content').style.display="none";
+  document.getElementById("mobile-nav-menu").onclick = function () {
+    if (document.getElementById("mobile-nav-menu").innerText == 'MENU') {
+      document.getElementById("mobile-nav-menu").innerText = 'BACK';
+      document.getElementById('sidebar').style.display = "block";
+      document.getElementById('main-content').style.display = "none";
     } else {
-      document.getElementById("showMenu").innerText = 'MENU';
-      document.getElementById('sidebar').style.display="none";
-      document.getElementById('main-content').style.display="block";
+      document.getElementById("mobile-nav-menu").innerText = 'MENU';
+      document.getElementById('sidebar').style.display = "none";
+      document.getElementById('main-content').style.display = "block";
     }
   }
 </script>
