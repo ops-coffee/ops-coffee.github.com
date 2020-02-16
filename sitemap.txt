@@ -1,6 +1,7 @@
 https://ops-coffee.cn/
 https://ops-coffee.cn/search.html
 https://ops-coffee.cn/friends.html
+https://ops-coffee.cn/search.html
 https://ops-coffee.cn/webssh.html
 https://ops-coffee.cn/devops.html
 https://ops-coffee.cn/questions.html
