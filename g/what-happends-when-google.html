@@ -199,28 +199,36 @@
 <ul>
 <li>客户端选择一个初始序列号(ISN)，将设置了 SYN位的封包发送给服务器端，表明自己要建立连接并设置了初始序列号</li>
 <li>
-<p>服务器端接收到 SYN 包，如果它可以建立连接：
-        -   服务器端选择它自己的初始序列号
-        -   服务器端设置 SYN 位，表明自己选择了一个初始序列号
-        -   服务器端把 (客户端ISN + 1) 复制到 ACK 域，并且设置 ACK
-            位，表明自己接收到了客户端的第一个封包</p>
+<p>服务器端接收到 SYN 包，如果它可以建立连接：</p>
+<pre class="codehilite"><code>-   服务器端选择它自己的初始序列号
+-   服务器端设置 SYN 位，表明自己选择了一个初始序列号
+-   服务器端把 (客户端ISN + 1) 复制到 ACK 域，并且设置 ACK
+    位，表明自己接收到了客户端的第一个封包</code></pre>
+
+
 </li>
 <li>
-<p>客户端通过发送下面一个封包来确认这次连接：
-        -   自己的序列号+1
-        -   接收端 ACK+1
-        -   设置 ACK 位</p>
+<p>客户端通过发送下面一个封包来确认这次连接：</p>
+<pre class="codehilite"><code>-   自己的序列号+1
+-   接收端 ACK+1
+-   设置 ACK 位</code></pre>
+
+
 </li>
 <li>
-<p>数据通过下面的方式传输：
-        -   当一方发送了N个 Bytes 的数据之后，将自己的 SEQ 序列号也增加N
-        -   另一方确认接收到这个数据包（或者一系列数据包）之后，它发送一个ACK 包，ACK 的值设置为接收到的数据包的最后一个序列号</p>
+<p>数据通过下面的方式传输：</p>
+<pre class="codehilite"><code>-   当一方发送了N个 Bytes 的数据之后，将自己的 SEQ 序列号也增加N
+-   另一方确认接收到这个数据包（或者一系列数据包）之后，它发送一个ACK 包，ACK 的值设置为接收到的数据包的最后一个序列号</code></pre>
+
+
 </li>
 <li>
-<p>关闭连接时：
-        -   要关闭连接的一方发送一个 FIN 包
-        -   另一方确认这个 FIN 包，并且发送自己的 FIN 包
-        -   要关闭的一方使用 ACK 包来确认接收到了 FIN</p>
+<p>关闭连接时：</p>
+<pre class="codehilite"><code>-   要关闭连接的一方发送一个 FIN 包
+-   另一方确认这个 FIN 包，并且发送自己的 FIN 包
+-   要关闭的一方使用 ACK 包来确认接收到了 FIN</code></pre>
+
+
 </li>
 </ul>
 <h2 id="tls">TLS 握手</h2>
@@ -269,10 +277,12 @@
 <ul>
 <li>HTTPD 接收请求</li>
 <li>
-<p>服务器把请求拆分为以下几个参数：
-        -   HTTP 请求方法(<code>GET</code>, <code>POST</code>, <code>HEAD</code>, <code>PUT</code>, <code>DELETE</code>,<code>CONNECT</code>, <code>OPTIONS</code>, 或者 <code>TRACE</code>)。直接在地址栏中输入 URL这种情况下，使用的是 GET 方法
-        -   域名：google.com
-        -   请求路径/页面：/ (我们没有请求google.com下的指定的页面，因此/ 是默认的路径)</p>
+<p>服务器把请求拆分为以下几个参数：</p>
+<pre class="codehilite"><code>- HTTP 请求方法(`GET`, `POST`, `HEAD`, `PUT`, `DELETE`,`CONNECT`, `OPTIONS`, 或者 `TRACE`)。直接在地址栏中输入 URL这种情况下，使用的是 GET 方法
+- 域名：google.com
+- 请求路径/页面：/ (我们没有请求google.com下的指定的页面，因此/ 是默认的路径)</code></pre>
+
+
 </li>
 <li>
 <p>服务器验证其上已经配置了 google.com 的虚拟主机</p>
