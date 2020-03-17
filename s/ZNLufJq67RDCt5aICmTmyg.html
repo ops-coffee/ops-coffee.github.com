@@ -133,8 +133,8 @@ AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
 <p><strong>AUTH_LDAP_ALWAYS_UPDATE_USER：</strong> 是否同步LDAP的修改，默认为True，即当LDAP中用户的属性修改后用户通过LDAP系统认证时自动同步更新到Django的User表中，如果设置为False则不自动更新</p>
 <p><strong>AUTH_LDAP_CACHE_TIMEOUT：</strong> 设置LDAP认证缓存的时间</p>
 <h2 id="_3">登录验证</h2>
-<p>上边的配置没有问题后就可以通过LDAP系统账号进行登录操作了，默认登陆逻辑及前端登录代码均无需修改，可以参考github的相关代码，地址：</p>
-<p><a href="https://github.com/ops-coffee/demo/tree/master/openldap">https://github.com/ops-coffee/demo/tree/master/openldap</a></p>
+<p>上边的配置没有问题后就可以通过LDAP系统账号进行登录操作了，默认登陆逻辑及前端登录代码均无需修改</p>
+<p>如果你在调试过程中遇到问题，我准备了一份demo源码可供参考，公众号后台回复<strong>09</strong>获取地址</p>
 <h2 id="_4">高级配置</h2>
 <p>所谓高级配置这里主要是说明下<code>django-auth-ldap</code>中组相关的配置，这需要对LDAP的组有一定的概念，为了方便理解，接下来我们以实际的例子来说明</p>
 <p>假如我们有三个组overmind、kerrigan、admin，配置如下：</p>
@@ -222,8 +222,8 @@ Successfully installed python-ldap-3.2.0</code></pre>
 <p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
 <p>相关文章推荐阅读：</p>
 <ul>
-<li><a href="https://ops-coffee.cn/s/JyH5mqwWFt0N1nGYZqBCBQ">OpenLDAP部署及管理维护</a></li>
-<li><a href="https://ops-coffee.cn/s/Kgj_5ydnT2W4Gt0vrw7gtw">Django+JWT实现Token认证</a></li>
+<li><a href="/s/JyH5mqwWFt0N1nGYZqBCBQ">OpenLDAP部署及管理维护</a></li>
+<li><a href="/s/Kgj_5ydnT2W4Gt0vrw7gtw">Django+JWT实现Token认证</a></li>
 </ul>
       </section>
 
@@ -241,6 +241,7 @@ Successfully installed python-ldap-3.2.0</code></pre>
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
