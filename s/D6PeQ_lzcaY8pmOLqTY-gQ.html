@@ -61,7 +61,7 @@
         <blockquote>
 <p>安全无小事，安全防范从nginx配置做起</p>
 </blockquote>
-<p>上一篇文章<a href="https://ops-coffee.cn/s/JyUnN_OtQ2NtXcH0mtCJUg">《Nginx的几个常用配置和技巧》</a>收到了不错的反馈，这里再总结下nginx配置中与安全有关的一些配置</p>
+<p>上一篇文章<a href="/s/JyUnN_OtQ2NtXcH0mtCJUg">《Nginx的几个常用配置和技巧》</a>收到了不错的反馈，这里再总结下nginx配置中与安全有关的一些配置</p>
 <h2 id="_1">隐藏版本号</h2>
 <pre class="codehilite"><code>http {
     server_tokens off;
@@ -119,7 +119,7 @@ if ($allow = false) { return 404; }</code></pre>
 }</code></pre>
 
 
-<p>关于账号认证<a href="https://ops-coffee.cn/s/JyUnN_OtQ2NtXcH0mtCJUg">《Nginx的几个常用配置和技巧》</a>文章中已有详细介绍，这里不赘述</p>
+<p>关于账号认证<a href="/s/JyUnN_OtQ2NtXcH0mtCJUg">《Nginx的几个常用配置和技巧》</a>文章中已有详细介绍，这里不赘述</p>
 <h2 id="_4">限制请求方法</h2>
 <pre class="codehilite"><code>if ($request_method !~ ^(GET|POST)$ ) {
     return 405;
@@ -251,8 +251,8 @@ add_header X-Content-Type-Options &quot;nosniff&quot;;</code></pre>
 <p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
 <p>相关文章推荐阅读：</p>
 <ul>
-<li><a href="https://ops-coffee.cn/s/HwOi-ARTvvNjGTWrDmZIkQ">我们自研的那些Devops工具</a></li>
-<li><a href="https://ops-coffee.cn/s/JyUnN_OtQ2NtXcH0mtCJUg">Nginx的几个常用配置和技巧</a></li>
+<li><a href="/s/HwOi-ARTvvNjGTWrDmZIkQ">我们自研的那些Devops工具</a></li>
+<li><a href="/s/JyUnN_OtQ2NtXcH0mtCJUg">Nginx的几个常用配置和技巧</a></li>
 </ul>
       </section>
 
@@ -270,6 +270,7 @@ add_header X-Content-Type-Options &quot;nosniff&quot;;</code></pre>
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
@@ -300,6 +301,20 @@ add_header X-Content-Type-Options &quot;nosniff&quot;;</code></pre>
     </div>
   </footer>
 </body>
+
+
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'main-content',
+        blogId: '22073-1589173966866-160',
+        name: '运维咖啡吧',
+        qrcode: 'https://blz.nosdn.127.net/sre/weixin.jpg',
+        keyword: 'VIP',
+    });
+</script>
+
 
 <script>
   document.getElementById("mobile-nav-menu").onclick = function () {

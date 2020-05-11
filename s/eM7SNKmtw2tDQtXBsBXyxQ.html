@@ -59,7 +59,7 @@
         
 
         <blockquote>
-<p>上一篇文章<a href="https://ops-coffee.cn/s/fl3OiX7xg9GVrj9G--a5-g">《记一次诡异的故障排查经历》</a>中有介绍到我们的部署程序varian，文章发布后有小伙伴对varian很感兴趣，今天就简单的介绍一下我们的varian，揭开她神秘的面纱~</p>
+<p>上一篇文章<a href="/s/fl3OiX7xg9GVrj9G--a5-g">《记一次诡异的故障排查经历》</a>中有介绍到我们的部署程序varian，文章发布后有小伙伴对varian很感兴趣，今天就简单的介绍一下我们的varian，揭开她神秘的面纱~</p>
 </blockquote>
 <h1 id="varian">什么是varian</h1>
 <p>varian是我们基于Python3编写的一套部署程序，处在整个部署系统的中心，与CMDB、Jenkins、SVN/Git、镜像仓库Harbor、Kubernetes API、通知系统等都有交互，负责将源代码经过一系列的处理后打包成Docker镜像，并发布到各个环境，然后通知相关人员。简化后的varian架构如下：</p>
@@ -220,6 +220,7 @@ if __name__ == '__main__':
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
@@ -250,6 +251,20 @@ if __name__ == '__main__':
     </div>
   </footer>
 </body>
+
+
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'main-content',
+        blogId: '22073-1589173966866-160',
+        name: '运维咖啡吧',
+        qrcode: 'https://blz.nosdn.127.net/sre/weixin.jpg',
+        keyword: 'VIP',
+    });
+</script>
+
 
 <script>
   document.getElementById("mobile-nav-menu").onclick = function () {

@@ -61,10 +61,10 @@
         <blockquote>
 <p>使用足够简单，功能足够强大，体验足够优秀</p>
 </blockquote>
-<p>之前有一个系列文章介绍我在运维系统开发过程中用到的那些顺手的前端插件，总共发了四篇文章介绍了三个非常棒的插件，分别是<a href="https://ops-coffee.cn/s/3Or2JK7_Wy9B0WqdUYDroA">bootstrap-duallistbox</a>、<a href="https://ops-coffee.cn/s/2w956ln2fA1jzdC-UQ55Vg">select2</a>和<a href="https://ops-coffee.cn/s/5dZx6HrPE1Y4rdxqHTYN-g">datatables</a>，今天再更此系列，让好东西让更多的人知道，受益！</p>
+<p>之前有一个系列文章介绍我在运维系统开发过程中用到的那些顺手的前端插件，总共发了四篇文章介绍了三个非常棒的插件，分别是<a href="/s/3Or2JK7_Wy9B0WqdUYDroA">bootstrap-duallistbox</a>、<a href="/s/2w956ln2fA1jzdC-UQ55Vg">select2</a>和<a href="/s/5dZx6HrPE1Y4rdxqHTYN-g">datatables</a>，今天再更此系列，让好东西让更多的人知道，受益！</p>
 <p>本次介绍ace.js，这是一个用JavaScript编写的独立代码编辑器。支持超过120种语言的语法高亮，超过20个不同风格的主题，同时还支持实时语法检查，自定义快捷键绑定，代码折叠，搜索替换，自动缩进等等功能</p>
 <p>项目地址为：https://ace.c9.io</p>
-<p>我主要用它来替换表单中的textarea标签，以及实现在网页上修改文件的展示，例如之前<a href="https://ops-coffee.cn/s/QG42UqJ9rnswQDMd41CYUg">配置中心Kerrigan</a>文章中讲到的web端修改配置文件就用了ace</p>
+<p>我主要用它来替换表单中的textarea标签，以及实现在网页上修改文件的展示，例如之前<a href="/s/QG42UqJ9rnswQDMd41CYUg">配置中心Kerrigan</a>文章中讲到的web端修改配置文件就用了ace</p>
 <p><img alt="" src="https://blz.nosdn.127.net/sre/images/20200117.01.png" /></p>
 <h2 id="_1">基本使用</h2>
 <p>这个项目引入非常简单，只需要引入一个ace.js文件即可，然后实例化即可</p>
@@ -231,8 +231,8 @@ editor.getSession().on('change', function(){
 <p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
 <p>相关文章推荐阅读：</p>
 <ul>
-<li><a href="https://ops-coffee.cn/s/fewb1jDso_FKPqhu9P1uHA">没有基础也能写个小程序</a></li>
-<li><a href="https://ops-coffee.cn/s/7g2wncQG1lIziOmtBxXwEw">利用Django徒手写个静态页面生成工具</a></li>
+<li><a href="/s/fewb1jDso_FKPqhu9P1uHA">没有基础也能写个小程序</a></li>
+<li><a href="/s/7g2wncQG1lIziOmtBxXwEw">利用Django徒手写个静态页面生成工具</a></li>
 </ul>
       </section>
 
@@ -250,6 +250,7 @@ editor.getSession().on('change', function(){
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
@@ -280,6 +281,20 @@ editor.getSession().on('change', function(){
     </div>
   </footer>
 </body>
+
+
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'main-content',
+        blogId: '22073-1589173966866-160',
+        name: '运维咖啡吧',
+        qrcode: 'https://blz.nosdn.127.net/sre/weixin.jpg',
+        keyword: 'VIP',
+    });
+</script>
+
 
 <script>
   document.getElementById("mobile-nav-menu").onclick = function () {

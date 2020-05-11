@@ -231,8 +231,8 @@ def echarts_data(request):
 <p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
 <p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
 <ul>
-<li><a href="https://ops-coffee.cn/s/7gPLaCESHAB0dLgq7qZq5Q">Django model转字典的几种方法</a></li>
-<li><a href="https://ops-coffee.cn/s/JVh4UnS2Tql9gUVaBSoGuA">Django model select的各种用法详解</a></li>
+<li><a href="/s/7gPLaCESHAB0dLgq7qZq5Q">Django model转字典的几种方法</a></li>
+<li><a href="/s/JVh4UnS2Tql9gUVaBSoGuA">Django model select的各种用法详解</a></li>
 </ul>
       </section>
 
@@ -250,6 +250,7 @@ def echarts_data(request):
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
@@ -280,6 +281,20 @@ def echarts_data(request):
     </div>
   </footer>
 </body>
+
+
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'main-content',
+        blogId: '22073-1589173966866-160',
+        name: '运维咖啡吧',
+        qrcode: 'https://blz.nosdn.127.net/sre/weixin.jpg',
+        keyword: 'VIP',
+    });
+</script>
+
 
 <script>
   document.getElementById("mobile-nav-menu").onclick = function () {

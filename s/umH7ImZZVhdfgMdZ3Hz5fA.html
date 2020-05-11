@@ -59,7 +59,7 @@
         
 
         <blockquote>
-<p>上篇文章<a href="https://ops-coffee.cn/s/ZrrLUNRlAXVfVKvA1m0nsg">《中小团队快速构建SQL自动审核系统》</a>我们完成了SQL的自动审核与执行，不仅提高了效率还受到了同事的肯定，心里美滋滋。但关于慢查询的收集及处理也耗费了我们太多的时间和精力，如何在这一块也能提升效率呢？且看本文讲解如何利用ELK做慢日志收集</p>
+<p>上篇文章<a href="/s/ZrrLUNRlAXVfVKvA1m0nsg">《中小团队快速构建SQL自动审核系统》</a>我们完成了SQL的自动审核与执行，不仅提高了效率还受到了同事的肯定，心里美滋滋。但关于慢查询的收集及处理也耗费了我们太多的时间和精力，如何在这一块也能提升效率呢？且看本文讲解如何利用ELK做慢日志收集</p>
 </blockquote>
 <h1 id="elk">ELK介绍</h1>
 <p>ELK最早是Elasticsearch（以下简称ES）、Logstash、Kibana三款开源软件的简称，三款软件后来被同一公司收购，并加入了Xpark、Beats等组件，改名为Elastic Stack，成为现在最流行的开源日志解决方案，虽然有了新名字但大家依然喜欢叫她ELK，现在所说的ELK就指的是基于这些开源软件构建的日志系统。</p>
@@ -254,6 +254,7 @@ output {
 <a class="button" href="/t/" target="_blank"> 日常运维记录</a>
 <a class="button" href="/devops" target="_blank"> 运维系统平台</a>
 <a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
 <a class="button" href="/x" target="_blank"> 脑洞大开系列</a>
 <a class="button" href="/w" target="_blank"> 新型冠状病毒</a>
 
@@ -284,6 +285,20 @@ output {
     </div>
   </footer>
 </body>
+
+
+<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+<script>
+    const btw = new BTWPlugin();
+    btw.init({
+        id: 'main-content',
+        blogId: '22073-1589173966866-160',
+        name: '运维咖啡吧',
+        qrcode: 'https://blz.nosdn.127.net/sre/weixin.jpg',
+        keyword: 'VIP',
+    });
+</script>
+
 
 <script>
   document.getElementById("mobile-nav-menu").onclick = function () {
