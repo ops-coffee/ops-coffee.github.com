@@ -59,17 +59,13 @@
         
 
         <p>只需三步即可轻松解决：</p>
-<ol>
-<li>确保settings.py文件有以下三个配置</li>
-</ol>
+<p>1.确保settings.py文件有以下三个配置</p>
 <pre class="codehilite"><code>STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)</code></pre>
 
 
-<ol>
-<li>在urls中添加如下配置</li>
-</ol>
+<p>2.在urls中添加如下配置</p>
 <pre class="codehilite"><code>from django.views import static
 from django.conf import settings
 from django.urls import path, re_path, include
@@ -79,9 +75,7 @@ urlpatterns = [
 ]</code></pre>
 
 
-<ol>
-<li>控制台下执行collectstatic命令收集静态文件</li>
-</ol>
+<p>3.控制台下执行collectstatic命令收集静态文件</p>
 <pre class="codehilite"><code># python manage.py collectstatic</code></pre>
       </section>
 
