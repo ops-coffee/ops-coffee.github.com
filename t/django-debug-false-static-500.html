@@ -58,7 +58,7 @@
         <h1 id="art-title">Django DEBUG = False导致静态文件加载失败500问题处理</h1>
         
 
-        <p>只需两步即可轻松解决：</p>
+        <p>只需三步即可轻松解决：</p>
 <ol>
 <li>确保settings.py文件有以下三个配置</li>
 </ol>
@@ -77,6 +77,12 @@ from django.urls import path, re_path, include
 urlpatterns = [
     re_path(r'^static/(?P&lt;path&gt;.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
 ]</code></pre>
+
+
+<ol>
+<li>控制台下执行collectstatic命令收集静态文件</li>
+</ol>
+<pre class="codehilite"><code># python manage.py collectstatic</code></pre>
       </section>
 
       <aside id="sidebar">
