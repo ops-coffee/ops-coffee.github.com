@@ -50,11 +50,13 @@
 
   <div id="content-wrapper">
     <div class="container">
-      <p>LDAP：Lightweight Directory Access Protocol，轻量目录访问协议。是一个为只读（查询、浏览、搜索）访问而优化的非关系型数据库，呈树状结构组织数据。主要用做用户信息查询（如邮箱、电话等）或对各种服务访问做后台认证以及用户数据权限管控。</p>
+      <p>LDAP：Lightweight Directory Access Protocol，轻量目录访问协议。是一个为只读访问而优化的非关系型数据库，呈树状结构组织数据。</p>
+
+<p>LDAP使用非常广泛，主要用做用户信息查询或对各种服务访问做后台认证以及用户数据权限管控，例如Windows域账号的验证就使用了LDAP协议，绝大部分的开源项目也都支持通过LDAP协议来验证账号，例如SVN、Git、Jenkins等等，同时大多成熟的商业专业也提供了对LDAP的支持，例如Jira、Confluence等</p>
+
+<p>以下系列文章主要介绍LDAP的基础知识和OpenLDAP的部署和管理维护，以及第三方服务接入OpenLDAP的详细步骤</p>
 
 <p style="text-align:center"><img alt="" src="https://blz.nosdn.127.net/sre/images/20180629.00.png"></p>
-
-<p>LDAP使用非常广泛，主要用来做集中的用户认证，例如Windows域账号的验证就使用了LDAP协议，绝大部分的开源项目也都支持通过LDAP协议来验证账号，例如SVN、Git、Jenkins等等，同时大多成熟的商业专业也提供了对LDAP的支持，例如Jira、Confluence等</p>
 
 <h1 style="position: absolute;top: -9999px;left: -9999px;">ELK系统在生产环境下的原理方案及落地应用</h1>
 
