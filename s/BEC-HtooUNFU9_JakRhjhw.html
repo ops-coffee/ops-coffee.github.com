@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,Template,Django,Template,context,processors,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django Template 自定义全局变量" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/ops-coffee.min.css" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django Template 自定义全局变量</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
+  <meta property="og:title" content="Django Template 自定义全局变量" />
+  <meta property="og:description" content="Django Template 自定义全局变量" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
+  <!-- End SEO tag -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+
+  <!-- Google Adsense -->
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <a href="https://blog.ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+
+    <div class="header-mobile">
+      <a id="mobile-nav-site" href="/">运维咖啡吧</a>
+      <a id="mobile-nav-menu" href="javascript:void(0);" >MENU</a>
+    </div>
+  </header>
+
+  <div id="content-wrap">
+    <div class="container clearfix">
+      <section id="main-content">
+        
+        <h1 id="art-title">Django Template 自定义全局变量</h1>
+        
+
+        <p>当我在编写一个高度自定义的后台系统时，我希望将网站的一些信息存储在数据库中，用户可以通过页面修改就能生效，就像下图配置一样</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20201016.png" /></p>
+<p>通常页面中用到的变量需要在view中回传，但站点名称网站中所有页面都需要用到，难道每一个view都需要回传一遍吗？这让我想到了页面中经常用到的获取用户名方法<code>request.user.username</code>，<code>request</code>变量并没有在每个view中回传，但所有页面都可以调用，他是如何实现的？下文将为你详细介绍，了解之后可以通过编写自定义的全局变量，轻松解决以上问题</p>
+<h2 id="request">request哪里来的</h2>
+<p>在日常开发Django的过程中，如果你有用到默认的template，那么通常会通过<code>request.user.username</code>来获取登陆用户的用户名，你有没有想过这个<code>request</code>是哪来的？即便是后端<code>view</code>里不返回这边变量依然可以使用，怎么会如此神奇</p>
+<p>这要从Django默认配置文件<code>settings.py</code>里的<code>TEMPLATES</code>配置说起，默认的TEMPLATES配置如下</p>
+<pre class="codehilite"><code>TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]</code></pre>
+
+
+<p>其中<code>BACKENDS</code>指定了Djanog默认使用的模版引擎，默认的是Django自己开发的<code>DjangoTemplates</code>，当然你也可以替换成功能更为强大的<code>jinja2</code>，<code>DIRS</code>指定了项目中模板文件的位置，<code>APP_DIRS</code>配置是否开启在已安装的app下查找template，<code>OPTIONS</code>则指定template的后端设置</p>
+<p>之所以可以在模板中使用<code>request</code>的奥秘便隐藏在<code>context_processors</code>下，这个配置指定了Django渲染时执行的Python路径列表。<strong>当模板在渲染时，会执行<code>context_processors</code>列表中的所有函数，并将结果与上下文的context进行合并</strong>，也就是说模板接收到的参数除了<code>render</code>返回的<code>context</code>外，还有以上这个列表执行返回的结果</p>
+<p><code>django.template.context_processors.request</code>函数返回的字典中包含了<code>request</code></p>
+<pre class="codehilite"><code>def request(request):
+    return {'request': request}</code></pre>
+
+
+<p>所以如下这样一个view，即便是返回结果中没有返回<code>request</code>，我们依然可以在<code>setting.html</code>模版中使用<code>request.user</code></p>
+<pre class="codehilite"><code>def setting(request):
+    return render(request, 'setting.html', {})</code></pre>
+
+
+<p>同样的我们可以直接在模板中使用<code>perms.opscoffee.select_user</code>来判断用户是否拥有相应的权限，而不需要在view中返回<code>perms</code>，这也是因为<code>django.contrib.auth.context_processors.auth</code>返回了<code>perms</code></p>
+<pre class="codehilite"><code>def auth(request):
+    &quot;&quot;&quot;
+    Return context variables required by apps that use Django's authentication
+    system.
+
+    If there is no 'user' attribute in the request, use AnonymousUser (from
+    django.contrib.auth).
+    &quot;&quot;&quot;
+    if hasattr(request, 'user'):
+        user = request.user
+    else:
+        from django.contrib.auth.models import AnonymousUser
+        user = AnonymousUser()
+
+    return {
+        'user': user,
+        'perms': PermWrapper(user),
+    }</code></pre>
+
+
+<p>类似<code>request</code>和<code>perms</code>这些在所有模板中都可以调用的变量，可以看作是django的全局变量了</p>
+<h2 id="_1">如何自定义全局变量</h2>
+<p>上边我们知道了Django是如何定义全局变量<code>requests</code>的，那么我们只需照虎画猫写个类似的函数并加入<code>context_processors</code>就可以了，实现步骤如下</p>
+<p>先在名为<code>commons</code>的APP下创建个文件<code>context_processors.py</code>，编写如下的函数，返回<code>site</code>作为全局变量</p>
+<pre class="codehilite"><code>from commons.models import Setting
+
+
+def site(request):
+    site_name = Setting.objects.filter(key='site_name')
+    site_title = Setting.objects.filter(key='site_title')
+
+    site_name = site_name.first().value if site_name else ''
+    site_title = site_title.first().value if site_title else ''
+
+    return {'site': {'site_name': site_name, 'site_title': site_title}}</code></pre>
+
+
+<p>然后在<code>TEMPLATES</code>的<code>context_processors</code>写上对应的路径</p>
+<pre class="codehilite"><code>TEMPLATES = [
+    {
+        ...
+        'OPTIONS': {
+            'context_processors': [
+                ...
+                'commons.context_processors.site',  # 添加这一行信息
+            ],
+        },
+    },
+]</code></pre>
+
+
+<p>最后就可以在模板中通过<code>site.site_title</code>来获取站点title，以及通过<code>site.site_name</code>获取站点名称</p>
+<pre class="codehilite"><code>&lt;head&gt;
+  &lt;title&gt;{{ site.site_title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;wrapper&quot;&gt;
+    &lt;header class=&quot;main-header&quot;&gt;
+      &lt;a href=&quot;/&quot; class=&quot;logo&quot;&gt;
+        {{ site.site_name }}
+      &lt;/a&gt;
+    &lt;/header&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</code></pre>
+
+
+<p>至此，问题顺利解决</p>
+      </section>
+
+      <aside id="sidebar">
+        <button onclick="javascrtpt:window.open('/search.html')" style="width:100%;cursor:pointer">站内搜索</button>
+
+<blockquote class="route">作者介绍</blockquote>
+<p>37丫37，阿里云操作员，代码搬运工，涉猎广泛，重原则，有态度</p>
+<p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+<img border="0" src="https://blz.nosdn.127.net/sre/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+<p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+<blockquote class="route">归档列表</blockquote>
+<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
+<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
+<a class="button" href="/bpmn" target="_blank"> BPMN-JS系列</a>
+<a class="button" href="/x/" target="_blank"> 脑洞大开系列</a>
+<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+
+<blockquote class="route">锟斤拷锟斤</blockquote>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- sidebar -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-8944257246828217"
+     data-ad-slot="1313935804"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container clearfix">
+      <div class="copy"> © 2020 ops-coffee</div>
+
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+<script>
+  document.getElementById("mobile-nav-menu").onclick = function () {
+    if (document.getElementById("mobile-nav-menu").innerText == 'MENU') {
+      document.getElementById("mobile-nav-menu").innerText = 'BACK';
+      document.getElementById('sidebar').style.display = "block";
+      document.getElementById('main-content').style.display = "none";
+    } else {
+      document.getElementById("mobile-nav-menu").innerText = 'MENU';
+      document.getElementById('sidebar').style.display = "none";
+      document.getElementById('main-content').style.display = "block";
+    }
+  }
+</script>
+</html>
