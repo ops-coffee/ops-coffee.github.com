@@ -71,12 +71,6 @@ def get_expire(domain):
         certificate = pyopenssl.ssl.get_server_certificate((domain, 443))
         data = pyopenssl.OpenSSL.crypto.load_certificate(pyopenssl.OpenSSL.crypto.FILETYPE_PEM, certificate)
 
-        # conn = pyopenssl.ssl.create_connection((domain, 443))
-        # sock = pyopenssl.ssl.SSLContext(pyopenssl.ssl.PROTOCOL_SSLv23).wrap_socket(conn, server_hostname=domain)
-        #
-        # certificate = pyopenssl.ssl.DER_cert_to_PEM_cert(sock.getpeercert(True))
-        # data = pyopenssl.OpenSSL.crypto.load_certificate(pyopenssl.OpenSSL.crypto.FILETYPE_PEM, certificate)
-
         expire_time = datetime.strptime(data.get_notAfter().decode()[0:-1], '%Y%m%d%H%M%S')
         expire_days = (expire_time - datetime.now()).days
 
