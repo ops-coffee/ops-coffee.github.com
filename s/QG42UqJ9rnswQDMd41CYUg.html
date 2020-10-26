@@ -43,19 +43,11 @@
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
     </div>
-
-    <div class="header-mobile">
-      <a id="mobile-nav-site" href="/">运维咖啡吧</a>
-      <a id="mobile-nav-menu" href="javascript:void(0);" >MENU</a>
-    </div>
   </header>
 
   <div id="content-wrap">
-    <div class="container clearfix">
-      <section id="main-content">
-        
+    <div class="container">
         <h1 id="art-title">Kerrigan：配置中心管理UI的实现思路和技术细节</h1>
-        
 
         <p>去年写过一篇文章<a href="/s/uGUvV4jl4YIvNztuepdC8A">『中小团队落地配置中心详解』</a>，介绍了我们借助etcd+confd实现的配置中心方案，这是一个对<strong>运维友好</strong>，与开发解耦的极佳方案，经过了一年多的实践也确实帮我们解决了配置文件无版本、难回滚、更新复杂等问题</p>
 <p>这套配置中心解决方案的特点是，对整个配置文件进行管理，而非配置项，且在配置中心修改的配置，客户端可以实时自动更新。同时借助于我们自研的配置中心管理UI（kerrigan）还能够实现记录修改历史，快速回滚配置，与线上配置做对比等实用功能</p>
@@ -177,38 +169,61 @@ def migrate_notify_post(instance, created, **kwargs):
 <p><img alt="" src="https://blz.nosdn.127.net/sre/images/20191220.09.png" /></p>
 <p>至此，Kerrigan介绍完成，其最主要的功能是通过web浏览器来操作etcd里的KV数据，在此基础上做了扩展，对每一次的修改都做了记录，以实现实用的保存、发布、历史、回滚等功能</p>
 <p>最后再回顾一下整个配置中心的工作流程，配置管理员通过Kerrigan来添加或修改配置文件，Kerrigan记录修改，同时将修改同步至etcd，客户端上的confd服务在检测到etcd对应key的数据发生变化时，会自动拉取数据覆盖至本地配置文件，然后配合<code>check_cmd</code>和<code>reload_cmd</code>指令对配置文件进行检查和重载，更多细节原理回顾文章<a href="/s/uGUvV4jl4YIvNztuepdC8A">『中小团队落地配置中心详解』</a></p>
-      </section>
 
-      <aside id="sidebar">
-        <button onclick="javascrtpt:window.open('/search.html')" style="width:100%;cursor:pointer">站内搜索</button>
+        <hr>
 
-<blockquote class="route">作者介绍</blockquote>
-<p>37丫37，阿里云操作员，代码搬运工，涉猎广泛，重原则，有态度</p>
-<p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
-<img border="0" src="https://blz.nosdn.127.net/sre/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
-<p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+        <div class="nav-cell clearfix">
+            <p class="nav-list-title">相关文章推荐阅读</p>
 
-<blockquote class="route">归档列表</blockquote>
-<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
-<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
-<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
-<a class="button" href="/bpmn" target="_blank"> BPMN-JS系列</a>
-<a class="button" href="/x/" target="_blank"> 脑洞大开系列</a>
-<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+            <ul class="nav-list-art">
+              
+              <li>
+                <a class="nav-item" href="/s/GATfwNETo_aGsJHZdV5YzQ.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">中小团队基于Docker的devops实践</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/Nxh7mwPJPlbL3R9MdlkO_A.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Alodi：为了保密我开发了一个系统</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/xnBehfSlZ3J02xb0GFuGDw.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Docker环境的持续部署优化实践</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/h9k_C7kNB6q1VqxQDVHyiQ.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Alodi：环境创建从未如此简单</div>
+                  <p></p>
+                </a>
+              </li>
+              
+            </ul>
+        </div>
 
-<blockquote class="route">锟斤拷锟斤</blockquote>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- sidebar -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8944257246828217"
-     data-ad-slot="1313935804"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-      </aside>
+        <div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8944257246828217"
+                 data-ad-slot="6731434232"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     </div>
   </div>
 
@@ -217,24 +232,10 @@ def migrate_notify_post(instance, created, **kwargs):
       <div class="copy"> © 2020 ops-coffee</div>
 
       <div class="link">
-        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
-        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+        <a href="/" target="_blank">关于本站</a>
+        <a href="/" target="_blank">回到首页</a>
       </div>
     </div>
   </footer>
 </body>
-
-<script>
-  document.getElementById("mobile-nav-menu").onclick = function () {
-    if (document.getElementById("mobile-nav-menu").innerText == 'MENU') {
-      document.getElementById("mobile-nav-menu").innerText = 'BACK';
-      document.getElementById('sidebar').style.display = "block";
-      document.getElementById('main-content').style.display = "none";
-    } else {
-      document.getElementById("mobile-nav-menu").innerText = 'MENU';
-      document.getElementById('sidebar').style.display = "none";
-      document.getElementById('main-content').style.display = "block";
-    }
-  }
-</script>
 </html>

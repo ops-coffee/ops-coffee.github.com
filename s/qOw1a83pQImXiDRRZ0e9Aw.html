@@ -43,19 +43,11 @@
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
     </div>
-
-    <div class="header-mobile">
-      <a id="mobile-nav-site" href="/">运维咖啡吧</a>
-      <a id="mobile-nav-menu" href="javascript:void(0);" >MENU</a>
-    </div>
   </header>
 
   <div id="content-wrap">
-    <div class="container clearfix">
-      <section id="main-content">
-        
+    <div class="container">
         <h1 id="art-title">Logstash读取Kafka数据写入HDFS详解</h1>
-        
 
         <blockquote>
 <p>强大的功能，丰富的插件，让logstash在数据处理的行列中出类拔萃</p>
@@ -274,38 +266,61 @@ output {
 <p>match：匹配日志中的时间字段，这里为time_local</p>
 <p>target：将match匹配到的时间戳存储到给定的字段中，默认不指定的话就存到@timestamp字段</p>
 <p>另外还有参数可以配置：<code>timezone</code>,<code>locale</code>,<code>tag_on_failure</code>等，具体可查看<a href="https://www.elastic.co/guide/en/logstash/6.6/plugins-filters-date.html">官方文档</a></p>
-      </section>
 
-      <aside id="sidebar">
-        <button onclick="javascrtpt:window.open('/search.html')" style="width:100%;cursor:pointer">站内搜索</button>
+        <hr>
 
-<blockquote class="route">作者介绍</blockquote>
-<p>37丫37，阿里云操作员，代码搬运工，涉猎广泛，重原则，有态度</p>
-<p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
-<img border="0" src="https://blz.nosdn.127.net/sre/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
-<p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+        <div class="nav-cell clearfix">
+            <p class="nav-list-title">相关文章推荐阅读</p>
 
-<blockquote class="route">归档列表</blockquote>
-<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
-<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
-<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
-<a class="button" href="/bpmn" target="_blank"> BPMN-JS系列</a>
-<a class="button" href="/x/" target="_blank"> 脑洞大开系列</a>
-<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+            <ul class="nav-list-art">
+              
+              <li>
+                <a class="nav-item" href="/s/uGUvV4jl4YIvNztuepdC8A.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">中小团队落地配置中心详解</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/H5QiZ10KSdUXFW5LdH79wA.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Filebeat的Registry文件解读</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/CYUls7uczVwGzwptZOX0Dg.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">ELK日志系统之使用Rsyslog快速方便的收集Nginx日志</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/7bygZNOr_mdCWpF9PrZcFg.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">ELK日志系统之通用应用程序日志接入方案</div>
+                  <p></p>
+                </a>
+              </li>
+              
+            </ul>
+        </div>
 
-<blockquote class="route">锟斤拷锟斤</blockquote>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- sidebar -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8944257246828217"
-     data-ad-slot="1313935804"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-      </aside>
+        <div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8944257246828217"
+                 data-ad-slot="6731434232"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     </div>
   </div>
 
@@ -314,24 +329,10 @@ output {
       <div class="copy"> © 2020 ops-coffee</div>
 
       <div class="link">
-        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
-        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+        <a href="/" target="_blank">关于本站</a>
+        <a href="/" target="_blank">回到首页</a>
       </div>
     </div>
   </footer>
 </body>
-
-<script>
-  document.getElementById("mobile-nav-menu").onclick = function () {
-    if (document.getElementById("mobile-nav-menu").innerText == 'MENU') {
-      document.getElementById("mobile-nav-menu").innerText = 'BACK';
-      document.getElementById('sidebar').style.display = "block";
-      document.getElementById('main-content').style.display = "none";
-    } else {
-      document.getElementById("mobile-nav-menu").innerText = 'MENU';
-      document.getElementById('sidebar').style.display = "none";
-      document.getElementById('main-content').style.display = "block";
-    }
-  }
-</script>
 </html>
