@@ -15,10 +15,10 @@
   <title>用Python写个Linux系统命令</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="用Python写个Linux系统命令" />
   <meta property="og:description" content="用Python写个Linux系统命令" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -270,9 +270,6 @@ else:
 <p>以上代码的意思是根据传入的key和file路径，去配置中心获取对应配置文件的内容并写入到本地file中。需要注意的是<code>exit</code>，返回合适的退出状态是个很好的习惯，这样我们就可以通过<code>$?</code>来获取命令执行成功还是失败</p>
 <p>将此文件命名为getconfig并移动到/bin目录下添加执行权限，就可以在系统任何地方使用<code>getconfig</code>命令了</p>
 <pre class="codehilite"><code>getconfig /conf/coffee/prod/docker/Dockerfile  /home/project/coffee/Dockerfile</code></pre>
-
-
-<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
       </section>
 
       <aside id="sidebar">
