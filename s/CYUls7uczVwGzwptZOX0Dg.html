@@ -15,10 +15,10 @@
   <title>ELK日志系统之使用Rsyslog快速方便的收集Nginx日志</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="ELK日志系统之使用Rsyslog快速方便的收集Nginx日志" />
   <meta property="og:description" content="ELK日志系统之使用Rsyslog快速方便的收集Nginx日志" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -250,13 +250,6 @@ rsyslog_nginx</code></pre>
 <li>Rsyslog服务的单点问题可以通过部署多个Rsyslog服务过三层负载来保证高可用，不过以我们的经验来说rsyslog服务还是很稳定的，跑了一年多，每分钟日志处理量在20w左右，没有出现过宕机情况，不想这么复杂的话可以写个check rsyslog服务状态的脚本跑后台，挂了自动拉起来</li>
 <li>整个过程中我们使用了UDP协议，第一是因为Nginx日志的syslog模式默认支持的就是UDP协议，翻了官网没找到支持TCP的方式，我想这也是考虑到UDP协议的性能要比TCP好的多，第二也考虑到如果使用TCP遇到网络不稳定的情况下可能会不停的重试或等待，影响到Nginx的稳定。对于因为内容过长超过以太网数据帧长度的问题暂时没有遇到</li>
 </ol>
-<hr />
-<p><img alt="长按关注公众号查看更多原创文章" src="http://blz.nos.netease.com/sre/wx.qrcode.jpg" /></p>
-<p>如果你觉得文章对你有帮助，请转发分享给更多的人。如果你觉得读的不尽兴，推荐阅读以下文章：</p>
-<ul>
-<li><a href="/s/umH7ImZZVhdfgMdZ3Hz5fA">ELK构建MySQL慢日志收集平台详解</a></li>
-<li><a href="/s/GATfwNETo_aGsJHZdV5YzQ">中小团队基于Docker的devops实践</a></li>
-</ul>
       </section>
 
       <aside id="sidebar">
