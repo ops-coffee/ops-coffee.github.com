@@ -15,10 +15,10 @@
   <title>堡垒机的核心武器：WebSSH录像实现</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="堡垒机的核心武器：WebSSH录像实现" />
   <meta property="og:description" content="堡垒机的核心武器：WebSSH录像实现" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -207,13 +207,6 @@ function play(host,user,time,file) {
 <p>在写入文件的方案中，考虑了实时写入和一次性写入，实时写入就像上边这样，所有的操作都会实时写入录像文件，好处是录像不丢失，且能在操作的过程中进行实时的播放，缺点也很明显，就是会频繁的写文件，造成IO开销</p>
 <p>一次性写入可以在用户操作的过程中将录像数据写入内存，在websocket关闭时一次性异步写入到文件中，这种方案在最终写入文件时可能因为种种原因而失败，从而导致录像丢失，还有个缺点是当你WebSSH操作时间过长时，会导致内存的持续增加</p>
 <p>两种方案一种是对磁盘的消耗另一种是对内存的消耗，各有利弊，当然你也可以考虑批量写入，例如每分钟写一次文件，一分钟之内的保存在内存中，平衡内存和磁盘的消耗，期待你的实现</p>
-<hr />
-<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
-<p>相关文章推荐阅读：</p>
-<ul>
-<li><a href="/s/FHDyvHsh-oO1cn7AXk_4WA">Django实现WebSSH操作Kubernetes Pod</a></li>
-<li><a href="/s/a3eJjVTtuUjzwyk21nTBqQ">Django实现WebSSH操作物理机或虚拟机</a></li>
-</ul>
       </section>
 
       <aside id="sidebar">
