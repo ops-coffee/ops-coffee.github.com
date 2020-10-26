@@ -15,10 +15,10 @@
   <title>Nginx与安全有关的几个配置</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="Nginx与安全有关的几个配置" />
   <meta property="og:description" content="Nginx与安全有关的几个配置" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -246,13 +246,6 @@ add_header X-Content-Type-Options &quot;nosniff&quot;;</code></pre>
 
 
 <p>上边的配置表示当用户第一次访问后，会返回一个包含了<code>Strict-Transport-Security</code>响应头的字段，这个字段会告诉浏览器，在接下来的31536000秒内，当前网站的所有请求都使用https协议访问，参数<code>includeSubDomains</code>是可选的，表示所有子域名也将采用同样的规则</p>
-<hr />
-<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
-<p>相关文章推荐阅读：</p>
-<ul>
-<li><a href="/s/HwOi-ARTvvNjGTWrDmZIkQ">我们自研的那些Devops工具</a></li>
-<li><a href="/s/JyUnN_OtQ2NtXcH0mtCJUg">Nginx的几个常用配置和技巧</a></li>
-</ul>
       </section>
 
       <aside id="sidebar">
