@@ -15,10 +15,10 @@
   <title>WebSSH画龙点睛之lrzsz上传下载文件</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="WebSSH画龙点睛之lrzsz上传下载文件" />
   <meta property="og:description" content="WebSSH画龙点睛之lrzsz上传下载文件" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -83,13 +83,6 @@
 <p>又深入研究了zmodem协议是如何实现识别的，发现了zmodem的实现原理</p>
 <p>在服务器上执行sz命令后，会先输出<code>**B00000000000000</code>这样的内容，标识文件下载开始，当文件下载结束后会输出<code>OO</code>，取这两个特殊标记之间的二进制流组合成文件，就是要下载的完整文件</p>
 <p>rz命令类似，会在开始时输出<code>rz waiting to receive.**0100000023be50</code>标记，知道了这个规则，就只需要在发送给监控和录像的数据中去除sz标记之间的内容就可以了，问题完美解决，算是给WebSSH系列画上了句号</p>
-<hr />
-<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
-<p>相关文章推荐阅读：</p>
-<ul>
-<li><a href="/s/XBKEfJKaucTFFcj-cS95LQ">堡垒机的核心武器：WebSSH录像实现</a></li>
-<li><a href="/s/GXhkc8rBHhjjf_wHxd7j3w">堡垒机WebSSH进阶之实时监控和强制下线</a></li>
-</ul>
       </section>
 
       <aside id="sidebar">
