@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Django,Cache,10,20,2,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="Django开发中使用Cache缓存提升10倍效率" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/ops-coffee.min.css" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>Django开发中使用Cache缓存提升10倍效率</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
+  <meta property="og:title" content="Django开发中使用Cache缓存提升10倍效率" />
+  <meta property="og:description" content="Django开发中使用Cache缓存提升10倍效率" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
+  <!-- End SEO tag -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+
+  <!-- Google Adsense -->
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <a href="https://blog.ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+
+    <div class="header-mobile">
+      <a id="mobile-nav-site" href="/">运维咖啡吧</a>
+      <a id="mobile-nav-menu" href="javascript:void(0);" >MENU</a>
+    </div>
+  </header>
+
+  <div id="content-wrap">
+    <div class="container clearfix">
+      <section id="main-content">
+        
+        <h1 id="art-title">Django开发中使用Cache缓存提升10倍效率</h1>
+        
+
+        <p><a href="(/s/uXQbM4t11ICdzNofZyDeXA)">自定义任务引擎Probius</a>上线运行一段时间后，小伙伴跟我反馈有部分任务执行时间太长，等的花儿都谢了，例如下边这个任务竟然执行了超过24分钟</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20201026.01.png" /></p>
+<p>查看每个子任务的执行时间，发现单单消耗在“YARN安装模块”这个子任务的时间就超过20分钟，检查这个子任务的执行逻辑发现并没有发现问题，抛弃Probius，直接在服务器上执行这个子任务惊奇的发现执行时间只有2分钟，由此断定肯定是Probius的问题了</p>
+<p>又一次看了下这个子任务，发现任务的输出日志超过1w条，瞬间就知晓了其中的问题，经过简单修改再次测试，原本执行24分钟的任务执行时间缩短至3分钟以内，效率提升相当明显</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20201026.02.png" /></p>
+<p>究竟改了什么拥有如此魔力呢？先来看下下边这段代码</p>
+<pre class="codehilite"><code>class Logger:
+    def __init__(self, tid, state=None):
+        self.tid = tid
+        self.state = state
+        self.datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+
+    def add(self, details):
+        subtasklog = SubTaskLog.objects.get(id=self.tid)
+
+        if details:
+            details = details.replace('\n', ' ').replace('\r', ' ')
+            newlog = self.datetime + ' ' + details + ';'
+
+            if subtasklog.details:
+                subtasklog.details += newlog
+            else:
+                subtasklog.details = newlog
+
+        if self.state is not None:
+            subtasklog.state = self.state
+            subtasklog.save()</code></pre>
+
+
+<p>任务执行会不断的输出日志，这些日志就通过上边的<code>Logger</code>类写入数据库，以便前端可以及时读取实时展示，乍看上去并无不妥，但当短时间内日志产生量非常大时便会频繁读写数据库，数据库压力过大从而影响整个程序的执行效率。缓解数据库压力的有效方法就是加缓存</p>
+<p>其实当初在写这段代码的时候就考虑到了用缓存，之所以没有用的主要是因为：在项目设计的过程中我提倡尽量减少依赖，不过度设计，以实现需求为目标，尽量让项目简单，这样协作的小伙伴看起代码来不费劲，出了问题还容易查找原因。正常情况下任务的日质量都不大，数据库处理起来也不费劲，能满足需求，引入缓存势必要增加依赖，让项目更复杂，所以就没有加。但从上边的问题来看，数据库已无法满足需求，增加缓存就很有必要了</p>
+<h2 id="django-cache">Django Cache</h2>
+<p>Django本身就带有一个强大的缓存系统，提供不同级别的缓存粒度：可以缓存特定的视图，也可以只缓存部分模板片段，还可以缓存整个网站。但这几类都不是我想要的，本篇文章不会介绍以上几类缓存的使用，需要的话可以参考官网写的很详细</p>
+<p>Django同时还提供了底层缓存API，可以使用这个API以任意级别粒度在缓存中存储对象。这正是我所需要的，每次产生的新日志都不再直接写入数据库，而是先写入缓存中，待任务执行完成后一次写入数据库，这样将大大降低对数据库的消耗，且缓存大都使用内存来存储，读写效率极高</p>
+<h3 id="_1">缓存配置</h3>
+<p>Django的底层缓存API使用非常简单，首先需要在配置文件中配置启用缓存，<code>settings.py</code>文件中添加如下代码</p>
+<pre class="codehilite"><code>CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}</code></pre>
+
+
+<p>这里使用了<code>Memcached</code>作为缓存服务，<code>Memcached</code>是一个完全基于内存的缓存服务器，是<code>Django</code>原生支持的最快、最高效的缓存类型，其他还支持的缓存类型有</p>
+<ul>
+<li>数据库缓存：django.core.cache.backends.db.DatabaseCache，<code>LOCATION</code>为表名</li>
+<li>文件系统缓存：django.core.cache.backends.filebased.FileBasedCache，<code>LOCATION</code>为文件路径</li>
+<li>本地内存缓存：django.core.cache.backends.locmem.LocMemCache，<code>LOCATION</code>被用于标识各个内存存储</li>
+<li>虚拟缓存：django.core.cache.backends.dummy.DummyCache，仅用于开发模式，只是实现缓存接口，并不做其他操作</li>
+<li>自定义的缓存后台，例如redis等</li>
+</ul>
+<p>我原本是想直接使用本地内存缓存的，这样就无需再安装<code>Memcached</code>服务了，但是本地内存缓存为<strong>进程私有</strong>，不可跨进程访问，这就产生了一个问题就是<code>Logger</code>进程写入内存缓存后，我前端展示的进程读不到，就无法实时输出日志了，遂放弃内存缓存，改用Django支持最好的<code>Memcached</code></p>
+<p>使用Memcached前需要先安装memcached服务，以及python连接memcached的包</p>
+<pre class="codehilite"><code># debian系统安装memcached服务
+apt-get install memcached
+
+# 安装python连接memcached的包python-memcached
+pip install python-memcached</code></pre>
+
+
+<p>每个缓存后端都支持配置额外的参数，从而来控制缓存的行为，有效的参数如下：</p>
+<p><strong>TIMEOUT：</strong> 用于缓存的默认超时时间，以秒为单位，默认为300秒，当设置为<code>None</code>时表示永不过时，设置为<code>0</code>表示立刻过期不缓存</p>
+<p><strong>KEY_PREFIX：</strong> 缓存键前缀，如果有设置，则这个设置的值将自动添加到Django服务器使用的所有缓存键之前</p>
+<p><strong>VERSION：</strong> 通过Django服务器生成的缓存键的默认版本号，有点类似与Redis的db，以下例子能清晰展示VERSION的作用</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; from django.core.cache import cache
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.set('site', 'ops-coffee.cn', version=37)
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('site')
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('site', version=37)
+'ops-coffee.cn'
+&gt;&gt;&gt;</code></pre>
+
+
+<p><strong>OPTIONS：</strong> 传递到缓存后端服务的参数，例如我要传递username、password等参数到后端的memcached服务，那么可以这样写</p>
+<pre class="codehilite"><code>CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'LOCATION': '127.0.0.1:11211',
+        'OPTIONS': {
+            'binary': True,
+            'username': 'user',
+            'password': 'pass',
+            'behaviors': {
+                'ketama': True,
+            }
+        }
+    }
+}</code></pre>
+
+
+<h3 id="_2">缓存访问</h3>
+<p>开启Django Cache配置后，就可以使用缓存服务了，基本用法如下</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; from django.core.cache import cache</code></pre>
+
+
+<p><strong>cache.set(key, value, timeout=DEFAULT_TIMEOUT, version=None)</strong></p>
+<p>其中<code>key</code>是一个字符串，<code>value</code>是一个认可picklable形式的python对象，<code>timeout</code>和<code>version</code>参数都是可选的，<code>timeout</code>默认为<code>CACHES</code>配置中相应后端的<code>timeout</code>参数，<code>version</code>为对应的版本，参考上边关于<code>VERSION</code>的解释</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.set('site', 'ops-coffee.cn')
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('site')
+'ops-coffee.cn'
+&gt;&gt;&gt;</code></pre>
+
+
+<p><strong>cache.get(key, default=None, version=None)</strong></p>
+<p>新的参数<code>default</code>的意思是，当请求的key不存在时，则返回<code>default</code>设置的这个值，而不是默认不存在返回的`None</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.get('name')
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('name', 'has expired')
+'has expired'</code></pre>
+
+
+<p><strong>cache.add(key, value, timeout=DEFAULT_TIMEOUT, version=None)</strong></p>
+<p>与<code>cache.set</code>类似，只是当add的key不存在时，则新建key，存在则不做任何操作</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.add('site', 'https://blog.ops-coffee.cn')
+False
+&gt;&gt;&gt; cache.get('site')
+'https://ops-coffee.cn'
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('name')
+&gt;&gt;&gt; cache.add('name', '运维咖啡吧 博客')
+True
+&gt;&gt;&gt; cache.get('name')
+'运维咖啡吧 博客'</code></pre>
+
+
+<p>新建成功则会返回True，否则返回False</p>
+<p><strong>cache.get_or_set(key, default, timeout=DEFAULT_TIMEOUT, version=None)</strong></p>
+<p>需要2个参数，第一个为key，第二个为key不存在时设置的值。<code>get_or_set</code>意思是如果key存在，则返回key的值，如果不存在则给key设置一个值</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.get('name')
+'运维咖啡吧 博客'
+&gt;&gt;&gt; cache.get_or_set('name', '咖啡吧博客')
+'运维咖啡吧 博客'
+&gt;&gt;&gt;
+&gt;&gt;&gt; cache.get('path')
+&gt;&gt;&gt; cache.get_or_set('path', '/devops')
+'/devops'
+&gt;&gt;&gt; cache.get('path')
+'/devops'</code></pre>
+
+
+<p><strong>cache.get_many(keys, version=None)</strong></p>
+<p>通过传入一个keys列表，以字典格式返回这些列表中key存在的缓存值</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.add('name', '运维咖啡吧 博客')
+True
+&gt;&gt;&gt; cache.set('site', 'https://ops-coffee.cn')
+&gt;&gt;&gt; cache.get_many(['site','name','path'])
+{'site': 'https://ops-coffee.cn', 'name': '运维咖啡吧 博客'}</code></pre>
+
+
+<p><strong>cache.set_many(dict, timeout)</strong></p>
+<p>通过传入字典，批量设置缓存</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.set_many({'site':'ops-coffee.cn','name':'运维咖啡吧'})</code></pre>
+
+
+<p><strong>cache.delete(key, version=None)</strong></p>
+<p>删除一个key</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.delete('site')</code></pre>
+
+
+<p><strong>cache.delete_many(keys, version=None)</strong></p>
+<p>批量删除key</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.delete_many(['site','name'])</code></pre>
+
+
+<p><strong>cache.clear()</strong></p>
+<p>清空缓存，需要注意的是这会删除缓存里的所有key，可能包含一些并不是你设置的key</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.clear()</code></pre>
+
+
+<p><strong>cache.touch(key, timeout=DEFAULT_TIMEOUT, version=None)</strong></p>
+<p>更新key的过期时间为timeout设置的值，timeout是可选的，如果不写则默认为<code>CACHES</code>设置的<code>TIMEOUT</code>值</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.touch('site', 3)
+True</code></pre>
+
+
+<p>更新成功则返回True，否则返回False</p>
+<p><strong>cache.incr(key, delta=1, version=None)</strong></p>
+<p>incr递增一个已存在的int类型的key的值，默认情况下递增幅度为1，通过指定<code>delta</code>可以设置递增的幅度</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.set('num', 1)
+&gt;&gt;&gt; cache.incr('num')
+2
+&gt;&gt;&gt; cache.incr('num', 10)
+12</code></pre>
+
+
+<p><strong>cache.decr(key, delta=1, version=None)</strong></p>
+<p>与incr递增类似，decr为递减</p>
+<pre class="codehilite"><code>&gt;&gt;&gt; cache.decr('num')
+11
+&gt;&gt;&gt; cache.decr('num', 5)
+6</code></pre>
+
+
+<p><strong>cache.close()</strong></p>
+<p>如果缓存后端已经实现了close()方法，可以通过<code>cache.close()</code>关闭和缓存的连接</p>
+<h2 id="_3">代码优化</h2>
+<p>知道了代码存在的问题，也了解了Django中如何操作Cache，那么就可以着手优化上边的代码了，优化后的代码如下：</p>
+<pre class="codehilite"><code>class Logger:
+    def __init__(self, tid, state=None):
+        self.tid = tid
+        self.state = state
+        self.datetime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+
+        self.key = 'engine_subtasklog_%d' % self.tid
+
+    def add(self, details, sync=False):
+        subtasklog = SubTaskLog.objects.get(id=self.tid)
+
+        if details:
+            details = details.replace('\n', ' ').replace('\r', ' ')
+            newlog = self.datetime + ' ' + details + ';'
+
+            # 将详情更新到缓存中
+            old_log = cache.get(self.key, '')
+            cache.set(self.key, old_log + newlog) if old_log else cache.set(self.key, newlog)
+
+        if self.state is not None:
+            subtasklog.state = self.state
+
+            # 将缓存写入数据库并保存
+            subtasklog.details = cache.get(self.key)
+            subtasklog.save()
+
+            # 删除缓存
+            cache.delete(self.key)</code></pre>
+
+
+<p>根据任务ID创建缓存key，这条任务下的所有Log都会先写入缓存中，当任务结束时再将缓存中的日志一把写入数据库，从而减轻数据库压力，执行效率得到了极大的提升</p>
+<p><img alt="" src="https://blz.nosdn.127.net/sre/images/20201026.03.png" /></p>
+      </section>
+
+      <aside id="sidebar">
+        <button onclick="javascrtpt:window.open('/search.html')" style="width:100%;cursor:pointer">站内搜索</button>
+
+<blockquote class="route">作者介绍</blockquote>
+<p>37丫37，阿里云操作员，代码搬运工，涉猎广泛，重原则，有态度</p>
+<p>运营公众号【运维咖啡吧】，这是一个不落俗套坚持初心的公众号，一个你不可错过的公众号</p>
+<img border="0" src="https://blz.nosdn.127.net/sre/images/z-qrcode.jpg" width="100%" height="100%" alt="ops-coffee">
+<p>欢迎关注，后台回复“小二”加我微信，聊技术，谈理想，悟人生</p>
+
+<blockquote class="route">归档列表</blockquote>
+<a class="button" href="/devops" target="_blank"> 运维系统平台</a>
+<a class="button" href="/webssh" target="_blank"> WebSSH系列</a>
+<a class="button" href="/elk" target="_blank"> ELK日志系统</a>
+<a class="button" href="/bpmn" target="_blank"> BPMN-JS系列</a>
+<a class="button" href="/x/" target="_blank"> 脑洞大开系列</a>
+<a class="button" href="/t/" target="_blank"> 日常运维记录</a>
+
+<blockquote class="route">锟斤拷锟斤</blockquote>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- sidebar -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-8944257246828217"
+     data-ad-slot="1313935804"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container clearfix">
+      <div class="copy"> © 2020 ops-coffee</div>
+
+      <div class="link">
+        <a href="#sidebar" onclick="if(confirm('扫描二维码，关注我吧')==false)return false;" title="关于本站" target="">关于本站</a>
+        <a href="/friends" title="友情链接" target="_blank">友情链接</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+<script>
+  document.getElementById("mobile-nav-menu").onclick = function () {
+    if (document.getElementById("mobile-nav-menu").innerText == 'MENU') {
+      document.getElementById("mobile-nav-menu").innerText = 'BACK';
+      document.getElementById('sidebar').style.display = "block";
+      document.getElementById('main-content').style.display = "none";
+    } else {
+      document.getElementById("mobile-nav-menu").innerText = 'MENU';
+      document.getElementById('sidebar').style.display = "none";
+      document.getElementById('main-content').style.display = "block";
+    }
+  }
+</script>
+</html>
