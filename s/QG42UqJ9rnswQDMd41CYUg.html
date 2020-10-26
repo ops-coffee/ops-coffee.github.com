@@ -15,10 +15,10 @@
   <title>Kerrigan：配置中心管理UI的实现思路和技术细节</title>
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:site_name" content="运维咖啡吧" />
-  <meta property="og:url" content="https://ops-coffee.cn/" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
   <meta property="og:title" content="Kerrigan：配置中心管理UI的实现思路和技术细节" />
   <meta property="og:description" content="Kerrigan：配置中心管理UI的实现思路和技术细节" />
-  <link rel="canonical" href="https://ops-coffee.cn/" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
   <!-- End SEO tag -->
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -38,7 +38,7 @@
 <body>
   <header>
     <div class="container">
-      <a href="https://ops-coffee.cn/">
+      <a href="https://blog.ops-coffee.cn/">
         <h1>运维咖啡吧</h1>
       </a>
       <h2>追求技术的道路上，我从不曾停下脚步</h2>
@@ -177,13 +177,6 @@ def migrate_notify_post(instance, created, **kwargs):
 <p><img alt="" src="https://blz.nosdn.127.net/sre/images/20191220.09.png" /></p>
 <p>至此，Kerrigan介绍完成，其最主要的功能是通过web浏览器来操作etcd里的KV数据，在此基础上做了扩展，对每一次的修改都做了记录，以实现实用的保存、发布、历史、回滚等功能</p>
 <p>最后再回顾一下整个配置中心的工作流程，配置管理员通过Kerrigan来添加或修改配置文件，Kerrigan记录修改，同时将修改同步至etcd，客户端上的confd服务在检测到etcd对应key的数据发生变化时，会自动拉取数据覆盖至本地配置文件，然后配合<code>check_cmd</code>和<code>reload_cmd</code>指令对配置文件进行检查和重载，更多细节原理回顾文章<a href="/s/uGUvV4jl4YIvNztuepdC8A">『中小团队落地配置中心详解』</a></p>
-<hr />
-<p><img alt="扫码关注公众号查看更多实用文章" src="https://blz.nosdn.127.net/sre/wx.qrcode.png" /></p>
-<p>相关文章推荐阅读：</p>
-<ul>
-<li><a href="/s/HwOi-ARTvvNjGTWrDmZIkQ">我们自研的那些Devops工具</a></li>
-<li><a href="/s/GATfwNETo_aGsJHZdV5YzQ">中小团队基于Docker的devops实践</a></li>
-</ul>
       </section>
 
       <aside id="sidebar">
