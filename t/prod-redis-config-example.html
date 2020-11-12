@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="keywords" content="Redis,None,运维,运维博客,运维开发,自动化,云计算,ops,sre,linux,devops,cloud" />
+  <meta name="description" content="生产环境下的Redis标准配置" />
+  <link rel="stylesheet" href="https://blz.nosdn.127.net/sre/posts/css/ops-coffee.min.css" type="text/css" />
+  <link rel="shortcut icon" href="https://blz.nosdn.127.net/sre/images/favicon.ico" />
+
+  <!-- Begin SEO tag -->
+  <title>生产环境下的Redis标准配置</title>
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="运维咖啡吧" />
+  <meta property="og:url" content="https://blog.ops-coffee.cn/" />
+  <meta property="og:title" content="生产环境下的Redis标准配置" />
+  <meta property="og:description" content="生产环境下的Redis标准配置" />
+  <link rel="canonical" href="https://blog.ops-coffee.cn/" />
+  <!-- End SEO tag -->
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145167079-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145167079-1');
+  </script>
+
+  <!-- Google Adsense -->
+  <script data-ad-client="ca-pub-8944257246828217" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <a href="https://blog.ops-coffee.cn/">
+        <h1>运维咖啡吧</h1>
+      </a>
+      <h2>追求技术的道路上，我从不曾停下脚步</h2>
+    </div>
+  </header>
+
+  <div id="content-wrap">
+    <div class="container">
+        <h1 id="art-title">生产环境下的Redis标准配置</h1>
+
+        <h2 id="redis">当Redis仅做缓存时的配置</h2>
+<pre class="codehilite"><code>daemonize yes
+pidfile /var/run/redis/redis-server.pid
+port 6379
+tcp-backlog 511
+bind 0.0.0.0
+timeout 0
+tcp-keepalive 0
+loglevel warning
+logfile /var/log/redis/redis-server.log
+databases 16
+slave-serve-stale-data yes
+slave-read-only yes
+repl-disable-tcp-nodelay no
+slave-priority 100
+
+maxmemory 2GB
+maxmemory-policy allkeys-lru
+
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events &quot;&quot;
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-entries 512
+list-max-ziplist-value 64
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+
+slaveof 10.63.62.86 6379        #从上多出的配置</code></pre>
+
+
+<p>需注意<code>maxmemory</code>配置合适的内存大小</p>
+
+        <hr>
+
+        <div class="nav-cell clearfix">
+            <p class="nav-list-title">相关文章推荐阅读</p>
+
+            <ul class="nav-list-art">
+              
+            </ul>
+        </div>
+
+        <div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8944257246828217"
+                 data-ad-slot="6731434232"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <div class="nav-cell clearfix">
+            <p class="nav-list-title">能看到这里一定是真爱，关注一下吧</p>
+            <img alt="" src="https://blz.nosdn.127.net/sre/wx.sou1.png">
+        </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container clearfix">
+      <div class="copy"> © 2020 ops-coffee</div>
+
+      <div class="link">
+        <a href="/" target="_blank">关于本站</a>
+        <a href="/" target="_blank">回到首页</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
