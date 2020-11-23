@@ -13,6 +13,7 @@ https://blog.ops-coffee.cn/w/
 https://blog.ops-coffee.cn/x/
 https://blog.ops-coffee.cn/t/
 https://blog.ops-coffee.cn/s/
+https://blog.ops-coffee.cn/t/bpmn-js-minimap
 https://blog.ops-coffee.cn/t/tcp-ip-mtu-mss-explained
 https://blog.ops-coffee.cn/t/all-emoji-emoticon
 https://blog.ops-coffee.cn/t/eastmoney-fund-free-open-api
