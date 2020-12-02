@@ -67,6 +67,14 @@ ln -s /usr/local/bin/python3.6 /usr/bin/python</code></pre>
 python3 get-pip.py</code></pre>
 
 
+<p>如果报错</p>
+<pre class="codehilite"><code>subprocess.CalledProcessError: Command '('lsb_release', '-a')' returned non-zero exit status 1.</code></pre>
+
+
+<p>则删除</p>
+<pre class="codehilite"><code>rm /usr/bin/lsb_release</code></pre>
+
+
 <h2 id="pip_1">修改pip源</h2>
 <p>默认pip安装软件时会从官方源安装，比较慢，可修改为国内的源，这里提供临时修改和永久修改两种修改方式</p>
 <p>临时修改，只需要添加<code>-i</code>参数</p>
@@ -94,17 +102,17 @@ trusted-host = mirrors.aliyun.com</code></pre>
             <ul class="nav-list-art">
               
               <li>
-                <a class="nav-item" href="/t/django-model-field-comment.html" target="_blank">
+                <a class="nav-item" href="/t/change-pip-source.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">django model字段添加备注Comment</div>
+                  <div class="nav-name">更新pip源让python包下载更畅快</div>
                   <p></p>
                 </a>
               </li>
               
               <li>
-                <a class="nav-item" href="/t/remove-github-commit-log.html" target="_blank">
+                <a class="nav-item" href="/t/tcp-ip-mtu-mss-explained.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">清除github所有历史提交记录的方法</div>
+                  <div class="nav-name">MTU 和 MSS 区别</div>
                   <p></p>
                 </a>
               </li>
@@ -118,17 +126,17 @@ trusted-host = mirrors.aliyun.com</code></pre>
               </li>
               
               <li>
-                <a class="nav-item" href="/t/change-pip-source.html" target="_blank">
+                <a class="nav-item" href="/t/django-debug-false-static-500.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">更新pip源让python包下载更畅快</div>
+                  <div class="nav-name">Django DEBUG = False导致静态文件加载失败500问题处理</div>
                   <p></p>
                 </a>
               </li>
               
               <li>
-                <a class="nav-item" href="/t/tcp-ip-mtu-mss-explained.html" target="_blank">
+                <a class="nav-item" href="/t/remove-github-commit-log.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">MTU 和 MSS 区别</div>
+                  <div class="nav-name">清除github所有历史提交记录的方法</div>
                   <p></p>
                 </a>
               </li>
