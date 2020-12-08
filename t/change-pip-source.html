@@ -50,19 +50,23 @@
         <h1 id="art-title">更新pip源让python包下载更畅快</h1>
 
         <p>更新源的方式主要有两种</p>
-<ol>
-<li>临时更新</li>
-</ol>
+<h2 id="_1">临时更新</h2>
 <pre class="codehilite"><code># pip3 install -r requirements.txt -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com</code></pre>
 
 
-<ol>
-<li>永久更新</li>
-</ol>
-<pre class="codehilite"><code># cat ~/.pip/pip.conf 
-[global]
-# index-url = http://mirrors.aliyun.com/pypi/simple/ 
-index-url = http://pypi.douban.com/simple/</code></pre>
+<h2 id="_2">永久更新</h2>
+<p>永久修改，需要修改文件，文件位置<code>~/.pip/pip.conf</code>，内容如下</p>
+<pre class="codehilite"><code>[global]
+index-url = http://pypi.douban.com/simple
+[install]
+trusted-host=pypi.douban.com</code></pre>
+
+
+<h3 id="ali">ali源配置</h3>
+<p>如果不想使用豆瓣的源，可以使用阿里的，配置如下</p>
+<pre class="codehilite"><code>[global]
+index-url = http://mirrors.aliyun.com/pypi/simple/
+trusted-host = mirrors.aliyun.com</code></pre>
 
         <hr>
 
@@ -72,9 +76,33 @@ index-url = http://pypi.douban.com/simple/</code></pre>
             <ul class="nav-list-art">
               
               <li>
-                <a class="nav-item" href="/t/django-debug-false-static-500.html" target="_blank">
+                <a class="nav-item" href="/t/python-pass-by-reference.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">Django DEBUG = False导致静态文件加载失败500问题处理</div>
+                  <div class="nav-name">python中的引用传递</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/t/django-custom-error-page.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Django自定义错误页面配置</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/t/debian8-jessie-install-java8.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Debian 8 Jessie安装Java8</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/t/nginx-upstream-github-pages.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Nginx反向代理加速Github Pages访问</div>
                   <p></p>
                 </a>
               </li>
@@ -88,33 +116,9 @@ index-url = http://pypi.douban.com/simple/</code></pre>
               </li>
               
               <li>
-                <a class="nav-item" href="/t/django-model-field-comment.html" target="_blank">
-                  <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">django model字段添加备注Comment</div>
-                  <p></p>
-                </a>
-              </li>
-              
-              <li>
                 <a class="nav-item" href="/t/remove-github-commit-log.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
                   <div class="nav-name">清除github所有历史提交记录的方法</div>
-                  <p></p>
-                </a>
-              </li>
-              
-              <li>
-                <a class="nav-item" href="/t/python-pass-by-reference.html" target="_blank">
-                  <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">python中的引用传递</div>
-                  <p></p>
-                </a>
-              </li>
-              
-              <li>
-                <a class="nav-item" href="/t/tar-file-openssl-des3.html" target="_blank">
-                  <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">Openssl Des3对压缩文件进行加密命令详解</div>
                   <p></p>
                 </a>
               </li>
