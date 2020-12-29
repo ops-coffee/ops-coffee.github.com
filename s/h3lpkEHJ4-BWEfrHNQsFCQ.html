@@ -54,24 +54,18 @@
 <p>Celery是基于Python开发的一个分布式任务队列框架，主要用来实现异步任务，具体介绍和用法可以看我之前写的这篇文章：<a href="/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a>，Django本身不支持异步，要想实现异步的话借助Celery是个不错的选择，上边这篇文章就提供了django集成celery的方法，但其配置稍微复杂，且不支持动态添加定时任务，django-celery的出现很好的解决了这个问题</p>
 <p>django-celery为django提供了celery集成，同时支持将结果存储在django的orm或cache中，最重要的是支持从数据库动态读取计划任务并执行，这也就是说我们只需要将需要执行的加护任务插入数据库，django-celery就可以自动发现并执行了，接下来就具体看下如何实现</p>
 <h2 id="_1">安装配置</h2>
-<ol>
-<li>安装<code>django-celery</code></li>
-</ol>
+<p>1.安装<code>django-celery</code></p>
 <pre class="codehilite"><code>pip install django-celery</code></pre>
 
 
-<ol>
-<li><code>settings.py</code>的<code>INSTALLED_APPS</code>中加入<code>djcelery</code></li>
-</ol>
+<p>2.<code>settings.py</code>的<code>INSTALLED_APPS</code>中加入<code>djcelery</code></p>
 <pre class="codehilite"><code>INSTALLED_APPS = [
     ...
     'djcelery',
 ]</code></pre>
 
 
-<ol>
-<li><code>settings.py</code>中添加如下配置</li>
-</ol>
+<p>3.<code>settings.py</code>中添加如下配置</p>
 <pre class="codehilite"><code>import djcelery
 djcelery.setup_loader()
 
@@ -95,9 +89,7 @@ from celery import platforms
 platforms.C_FORCE_ROOT = True</code></pre>
 
 
-<ol>
-<li>启动celery</li>
-</ol>
+<p>4.启动celery</p>
 <pre class="codehilite"><code>python manage.py celery worker -l info</code></pre>
 
 
@@ -146,15 +138,11 @@ def index(request):
 
 <h2 id="_3">周期任务</h2>
 <p>以上只是将任务变成了异步，如果我们想要周期执行<code>welcome</code>任务，该如何操作呢？</p>
-<ol>
-<li>首先需要执行<code>migrate</code>命令在数据库创建表</li>
-</ol>
+<p>1.首先需要执行<code>migrate</code>命令在数据库创建表</p>
 <pre class="codehilite"><code>python manage.py migrate</code></pre>
 
 
-<ol>
-<li>然后修改<code>settings.py</code>文件中添加<code>CELERYBEAT_SCHEDULE</code>配置</li>
-</ol>
+<p>2.然后修改<code>settings.py</code>文件中添加<code>CELERYBEAT_SCHEDULE</code>配置</p>
 <pre class="codehilite"><code>CELERYBEAT_SCHEDULE = {
     'ops-coffee-1': {
         'task': 'coffee.tasks.welcome',
@@ -168,9 +156,7 @@ def index(request):
 
 
 <p>以上配置详细的解释可以看文章：<a href="/s/lXrp3igYo9W2UuE5Gauysg">Django配置Celery执行异步任务和定时任务</a></p>
-<ol>
-<li>最后启动beat</li>
-</ol>
+<p>3.最后启动beat</p>
 <pre class="codehilite"><code>python manage.py celery beat -l info</code></pre>
 
 
@@ -235,33 +221,17 @@ with transaction.atomic():
             <ul class="nav-list-art">
               
               <li>
-                <a class="nav-item" href="/s/dpGqieL4WCmGdQh1AEG4Gw.html" target="_blank">
+                <a class="nav-item" href="/s/ZNLufJq67RDCt5aICmTmyg.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">代码中的敏感信息加密方案</div>
+                  <div class="nav-name">LDAP落地实战（五）：Django集成OpenLDAP认证</div>
                   <p></p>
                 </a>
               </li>
               
               <li>
-                <a class="nav-item" href="/s/7g2wncQG1lIziOmtBxXwEw.html" target="_blank">
+                <a class="nav-item" href="/s/HwOi-ARTvvNjGTWrDmZIkQ.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">利用Django徒手写个静态页面生成工具</div>
-                  <p></p>
-                </a>
-              </li>
-              
-              <li>
-                <a class="nav-item" href="/s/lXrp3igYo9W2UuE5Gauysg.html" target="_blank">
-                  <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">Django配置Celery执行异步任务和定时任务</div>
-                  <p></p>
-                </a>
-              </li>
-              
-              <li>
-                <a class="nav-item" href="/s/BZsJnWLtv8ZwwlBYbWSbZQ.html" target="_blank">
-                  <div class="nav-img nav-img-default"></div>
-                  <div class="nav-name">Django内置权限扩展案例</div>
+                  <div class="nav-name">我们自研的那些Devops工具</div>
                   <p></p>
                 </a>
               </li>
@@ -278,6 +248,22 @@ with transaction.atomic():
                 <a class="nav-item" href="/t/django-debug-false-static-500.html" target="_blank">
                   <div class="nav-img nav-img-default"></div>
                   <div class="nav-name">Django DEBUG = False导致静态文件加载失败500问题处理</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/e3m9xHVsvhe36IvG1YKhbA.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Django+zTree构建组织架构树</div>
+                  <p></p>
+                </a>
+              </li>
+              
+              <li>
+                <a class="nav-item" href="/s/uXQbM4t11ICdzNofZyDeXA.html" target="_blank">
+                  <div class="nav-img nav-img-default"></div>
+                  <div class="nav-name">Probius：一个功能强大的自定义任务系统</div>
                   <p></p>
                 </a>
               </li>
