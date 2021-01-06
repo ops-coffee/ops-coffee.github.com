@@ -27,7 +27,7 @@ https://blog.ops-coffee.cn/s/AG9dc0G7mRaTPZ-3QQgX9Q
 https://blog.ops-coffee.cn/t/bpmn-js-minimap
 https://blog.ops-coffee.cn/t/tcp-ip-mtu-mss-explained
 https://blog.ops-coffee.cn/t/all-emoji-emoticon
-https://blog.ops-coffee.cn/t/eastmoney-fund-free-open-api
+https://blog.ops-coffee.cn/f/eastmoney-fund-free-open-api
 https://blog.ops-coffee.cn/t/nginx-upstream-github-pages
 https://blog.ops-coffee.cn/t/prod-redis-config-example
 https://blog.ops-coffee.cn/s/U3ROqNtzx6MZvhnu2Iqw2A
